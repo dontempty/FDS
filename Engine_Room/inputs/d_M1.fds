@@ -1,0 +1,201 @@
+&HEAD CHID='d_M1', TITLE='Marine engine-room fire (Lan et al. 2023, Fig 1)' /
+
+! ============================================================
+! Interior: 13 × 10 × 3 m  (x[0,13] y[0,10] z[0,3])
+! Domain   : x[-0.2,13.2] y[-0.2,10.2] z[0.0,3.0]  (wall ±0.2 m)
+! Fire   : floor VENT x=[7.955,8.845]  y=[1.005,1.895]  z=0  (0.79 m², peak HRR=863 kW, HRRPUA=863.0 kW/m²)
+! Cells  : 130 × 100 × 30 = 390,000
+! Split  : 2 × 4 × 2 = 16 sub-mesh(es) → MPI ranks
+! dx=0.1031 dy=0.1040 dz=0.1000 m
+! Equipment (3):
+!   main_engine                  x=[3.5,10.0] y=[5.2,9.0] z=[0.0,2.0]
+!   fuel_oil_supply              x=[4.5,6.5] y=[3.7,4.7] z=[0.0,1.0]
+!   preheater                    x=[11.8,12.0] y=[4.5,5.5] z=[0.0,0.5]
+! Walls (12):
+!   outer_west                   x=[-0.2,0.0] y=[-0.2,10.2] z=[0.0,3.0]
+!   outer_east                   x=[13.0,13.2] y=[-0.2,10.2] z=[0.0,3.0]
+!   outer_south                  x=[-0.2,13.2] y=[-0.2,0.0] z=[0.0,3.0]
+!   outer_north                  x=[-0.2,13.2] y=[10.0,10.2] z=[0.0,3.0]
+!   east_rooms_1to3              x=[2.2,2.4000000000000004] y=[4.1,9.7] z=[0.0,3.0]
+!   east_rooms_4_5               x=[3.8,4.0] y=[0.0,4.1] z=[0.0,3.0]
+!   h_top_room1                  x=[0.0,2.2] y=[9.5,9.7] z=[0.0,3.0]
+!   h_room1_room2                x=[0.0,2.2] y=[7.5,7.7] z=[0.0,3.0]
+!   h_room2_room3                x=[0.0,2.2] y=[5.8,6.0] z=[0.0,3.0]
+!   h_room3_room4                x=[0.0,4.0] y=[4.1,4.3] z=[0.0,3.0]
+!   h_room4_room5                x=[0.0,4.0] y=[2.0,2.2] z=[0.0,3.0]
+!   osr_north_wall               x=[4.0,13.0] y=[2.9,3.1] z=[0.0,3.0]
+! Doors as HOLEs (2):
+!   door1_main_to_room1          x=[2.1500000000000004,2.45] y=[8.4,8.799999999999999] z=[0.0,2.0]
+!   door2_main_to_osr            x=[7.6,8.6] y=[2.85,3.15] z=[0.0,2.0]
+! Doors to outside (partial OPEN vents) (0):
+! ============================================================
+
+! Multi-mesh: each sub-mesh 65×25×15 = 24,375 cells.
+&MULT ID='m1', DX=6.699999999999999, DY=2.5999999999999996, DZ=1.5, I_LOWER=0, I_UPPER=1, J_LOWER=0, J_UPPER=3, K_LOWER=0, K_UPPER=1 /
+&MESH IJK=65,25,15, XB=-0.2,6.499999999999999,-0.2,2.3999999999999995,0.0,1.5, MULT_ID='m1' /
+
+&TIME T_END=300.0 /
+&MISC TMPA=20.0, TURBULENCE_MODEL='CONSTANT SMAGORINSKY' /  ! paper §2.1 LES + Table 3 ambient air
+&DUMP DT_DEVC=1.0, DT_HRR=1.0, DT_SLCF=2.0, DT_BNDF=30.0, DT_SL3D=2.0, SMOKE3D=.TRUE., MASS_FILE=.TRUE. /
+
+&REAC ID='DIESEL', FUEL='N-HEPTANE', HEAT_OF_COMBUSTION=42600, RADIATIVE_FRACTION=0.3 /  ! paper Table 2 (diesel)
+&RADI KAPPA0=1.7 /  ! paper Table 2 effective absorption coefficient
+
+! All 6 outer faces solid by default; doors below are explicit openings.
+
+! HVAC vents — Method 2, v=1.0 m/s normal velocity
+&SURF ID='vent_intake',  VEL=-1.0, COLOR='GREEN', TMP_FRONT=20.0 /  ! supply (inflow, VEL<0)
+&SURF ID='vent_exhaust', VEL=1.0,  COLOR='BLUE' /  ! exhaust (outflow, VEL>0)
+&VENT XB=12.4,13.0,0.0,0.0,2.4,3.0, SURF_ID='vent_intake' /  ! inlet_01 (intake on outer_south)
+&VENT XB=4.0,4.6,0.0,0.0,2.4,3.0, SURF_ID='vent_intake' /  ! inlet_02 (intake on outer_south)
+&VENT XB=12.4,13.0,3.1,3.1,2.4,3.0, SURF_ID='vent_intake' /  ! inlet_03 (intake on osr_north_wall)
+&VENT XB=4.0,4.6,3.1,3.1,2.4,3.0, SURF_ID='vent_intake' /  ! inlet_04 (intake on osr_north_wall)
+&VENT XB=12.4,13.0,2.9,2.9,0.0,0.6, SURF_ID='vent_exhaust' /  ! outlet_01 (exhaust on osr_north)
+&VENT XB=4.0,4.6,2.9,2.9,0.0,0.6, SURF_ID='vent_exhaust' /  ! outlet_02 (exhaust on osr_north)
+&VENT XB=12.4,13.0,10.0,10.0,0.0,0.6, SURF_ID='vent_exhaust' /  ! outlet_03 (exhaust on outer_north)
+&VENT XB=4.0,4.6,10.0,10.0,0.0,0.6, SURF_ID='vent_exhaust' /  ! outlet_04 (exhaust on outer_north)
+
+! Fire HRR ramp (fire from t=0)
+&RAMP ID='fire_hrr', T=0.000, F=0.000000 /
+&RAMP ID='fire_hrr', T=1.034, F=0.001189 /
+&RAMP ID='fire_hrr', T=2.069, F=0.004756 /
+&RAMP ID='fire_hrr', T=3.103, F=0.010702 /
+&RAMP ID='fire_hrr', T=4.138, F=0.019025 /
+&RAMP ID='fire_hrr', T=5.172, F=0.029727 /
+&RAMP ID='fire_hrr', T=6.207, F=0.042806 /
+&RAMP ID='fire_hrr', T=7.241, F=0.058264 /
+&RAMP ID='fire_hrr', T=8.276, F=0.076100 /
+&RAMP ID='fire_hrr', T=9.310, F=0.096314 /
+&RAMP ID='fire_hrr', T=10.345, F=0.118906 /
+&RAMP ID='fire_hrr', T=11.379, F=0.143876 /
+&RAMP ID='fire_hrr', T=12.414, F=0.171225 /
+&RAMP ID='fire_hrr', T=13.448, F=0.200951 /
+&RAMP ID='fire_hrr', T=14.483, F=0.233056 /
+&RAMP ID='fire_hrr', T=15.517, F=0.267539 /
+&RAMP ID='fire_hrr', T=16.552, F=0.304400 /
+&RAMP ID='fire_hrr', T=17.586, F=0.343639 /
+&RAMP ID='fire_hrr', T=18.621, F=0.385256 /
+&RAMP ID='fire_hrr', T=19.655, F=0.429251 /
+&RAMP ID='fire_hrr', T=20.690, F=0.475624 /
+&RAMP ID='fire_hrr', T=21.724, F=0.524376 /
+&RAMP ID='fire_hrr', T=22.759, F=0.575505 /
+&RAMP ID='fire_hrr', T=23.793, F=0.629013 /
+&RAMP ID='fire_hrr', T=24.828, F=0.684899 /
+&RAMP ID='fire_hrr', T=25.862, F=0.743163 /
+&RAMP ID='fire_hrr', T=26.897, F=0.803805 /
+&RAMP ID='fire_hrr', T=27.931, F=0.866825 /
+&RAMP ID='fire_hrr', T=28.966, F=0.932224 /
+&RAMP ID='fire_hrr', T=30.000, F=1.000000 /
+&RAMP ID='fire_hrr', T=300.000, F=1.000000 /
+
+! Steel material (Lan et al. 2023, Table 1)
+&MATL ID='STEEL', DENSITY=7850.0, SPECIFIC_HEAT=0.46, CONDUCTIVITY=45.8, EMISSIVITY=0.95 /
+
+&SURF ID='surf_wall_white', MATL_ID='STEEL', THICKNESS=0.2, BACKING='EXPOSED', COLOR='WHITE' /
+&SURF ID='surf_eq_purple', MATL_ID='STEEL', THICKNESS=0.2, BACKING='EXPOSED', COLOR='PURPLE' /
+&SURF ID='fire', COLOR='RED', HRRPUA=863.000, RAMP_Q='fire_hrr' /
+
+! 12 internal walls (rooms partition) -- steel
+&OBST XB=-0.2,0.0,-0.2,10.2,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: outer_west
+&OBST XB=13.0,13.2,-0.2,10.2,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: outer_east
+&OBST XB=-0.2,13.2,-0.2,0.0,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: outer_south
+&OBST XB=-0.2,13.2,10.0,10.2,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: outer_north
+&OBST XB=2.2,2.4000000000000004,4.1,9.7,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: east_rooms_1to3
+&OBST XB=3.8,4.0,0.0,4.1,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: east_rooms_4_5
+&OBST XB=0.0,2.2,9.5,9.7,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: h_top_room1
+&OBST XB=0.0,2.2,7.5,7.7,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: h_room1_room2
+&OBST XB=0.0,2.2,5.8,6.0,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: h_room2_room3
+&OBST XB=0.0,4.0,4.1,4.3,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: h_room3_room4
+&OBST XB=0.0,4.0,2.0,2.2,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: h_room4_room5
+&OBST XB=4.0,13.0,2.9,3.1,0.0,3.0, SURF_ID='surf_wall_white' /  ! wall: osr_north_wall
+
+! 2 door openings (&HOLE removes wall cells)
+&HOLE XB=2.1500000000000004,2.45,8.4,8.799999999999999,0.0,2.0 /  ! door: door1_main_to_room1
+&HOLE XB=7.6,8.6,2.85,3.15,0.0,2.0 /  ! door: door2_main_to_osr
+
+! 3 equipment OBSTs from Fig 1 -- steel shell
+&OBST XB=3.5,10.0,5.2,9.0,0.0,2.0, SURF_ID='surf_eq_purple' /  ! main_engine
+&OBST XB=4.5,6.5,3.7,4.7,0.0,1.0, SURF_ID='surf_eq_purple' /  ! fuel_oil_supply
+&OBST XB=11.8,12.0,4.5,5.5,0.0,0.5, SURF_ID='surf_eq_purple' /  ! preheater
+
+! floor except fire footprint (4 patches, z=0)
+&VENT XB=-0.2,13.2,-0.2,1.005,0,0, SURF_ID='surf_wall_white' /  ! floor south
+&VENT XB=-0.2,13.2,1.895,10.2,0,0, SURF_ID='surf_wall_white' /  ! floor north
+&VENT XB=-0.2,7.955,1.005,1.895,0,0, SURF_ID='surf_wall_white' /  ! floor west
+&VENT XB=8.845,13.2,1.005,1.895,0,0, SURF_ID='surf_wall_white' /  ! floor east
+
+&VENT MB='ZMAX', SURF_ID='surf_wall_white' /  ! ceiling — steel
+
+&VENT XB=7.955,8.845,1.005,1.895,0,0, SURF_ID='fire' /  ! fire footprint
+
+! Grid-convergence T(z) lines (paper §3.3 Fig 5)
+&DEVC ID='gridconv_T_dy00', XB=8.4000,8.4000,1.4500,1.4500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.0 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy01', XB=8.4000,8.4000,1.5500,1.5500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.1 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy02', XB=8.4000,8.4000,1.6500,1.6500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.2 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy03', XB=8.4000,8.4000,1.7500,1.7500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.3 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy04', XB=8.4000,8.4000,1.8500,1.8500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.4 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy05', XB=8.4000,8.4000,1.9500,1.9500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.5 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy06', XB=8.4000,8.4000,2.0500,2.0500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.6 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy07', XB=8.4000,8.4000,2.1500,2.1500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.7 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy08', XB=8.4000,8.4000,2.2500,2.2500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.8 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy09', XB=8.4000,8.4000,2.3500,2.3500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +0.9 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy10', XB=8.4000,8.4000,2.4500,2.4500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +1.0 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy11', XB=8.4000,8.4000,2.5500,2.5500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +1.1 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy12', XB=8.4000,8.4000,2.6500,2.6500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +1.2 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy13', XB=8.4000,8.4000,2.7500,2.7500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +1.3 m, z=[0.05, 2.95]
+&DEVC ID='gridconv_T_dy14', XB=8.4000,8.4000,2.8500,2.8500,0.0500,2.9500, POINTS=30, QUANTITY='TEMPERATURE', HIDE_COORDINATES=.TRUE. /  ! centre +1.4 m, z=[0.05, 2.95]
+! WARNING: DEVC 'gridconv_T_dy15' (centre +1.5 m) at x=8.400, y=2.950: 10/30 sample points inside wall 'osr_north_wall' — sample line drops INTO solid OBST.  DEVC OMITTED.
+
+&SLCF PBX=8.100, QUANTITY='TEMPERATURE' /
+&SLCF PBX=8.400, QUANTITY='TEMPERATURE' /
+&SLCF PBY=1.450, QUANTITY='TEMPERATURE' /
+&SLCF PBZ=0.300, QUANTITY='TEMPERATURE' /
+&SLCF PBZ=2.000, QUANTITY='TEMPERATURE' /
+&SLCF PBZ=2.700, QUANTITY='TEMPERATURE' /
+&SLCF PBX=8.100, QUANTITY='HRRPUV' /
+&SLCF PBX=8.400, QUANTITY='HRRPUV' /
+&SLCF PBY=1.450, QUANTITY='HRRPUV' /
+&SLCF PBZ=0.300, QUANTITY='HRRPUV' /
+&SLCF PBZ=2.000, QUANTITY='HRRPUV' /
+&SLCF PBZ=2.700, QUANTITY='HRRPUV' /
+&SLCF PBX=8.100, QUANTITY='VISIBILITY' /
+&SLCF PBX=8.400, QUANTITY='VISIBILITY' /
+&SLCF PBY=1.450, QUANTITY='VISIBILITY' /
+&SLCF PBZ=0.300, QUANTITY='VISIBILITY' /
+&SLCF PBZ=2.000, QUANTITY='VISIBILITY' /
+&SLCF PBZ=2.700, QUANTITY='VISIBILITY' /
+&SLCF PBX=8.100, QUANTITY='U-VELOCITY' /
+&SLCF PBX=8.400, QUANTITY='U-VELOCITY' /
+&SLCF PBY=1.450, QUANTITY='U-VELOCITY' /
+&SLCF PBZ=0.300, QUANTITY='U-VELOCITY' /
+&SLCF PBZ=2.000, QUANTITY='U-VELOCITY' /
+&SLCF PBZ=2.700, QUANTITY='U-VELOCITY' /
+&SLCF PBX=8.100, QUANTITY='V-VELOCITY' /
+&SLCF PBX=8.400, QUANTITY='V-VELOCITY' /
+&SLCF PBY=1.450, QUANTITY='V-VELOCITY' /
+&SLCF PBZ=0.300, QUANTITY='V-VELOCITY' /
+&SLCF PBZ=2.000, QUANTITY='V-VELOCITY' /
+&SLCF PBZ=2.700, QUANTITY='V-VELOCITY' /
+&SLCF PBX=8.100, QUANTITY='W-VELOCITY' /
+&SLCF PBX=8.400, QUANTITY='W-VELOCITY' /
+&SLCF PBY=1.450, QUANTITY='W-VELOCITY' /
+&SLCF PBZ=0.300, QUANTITY='W-VELOCITY' /
+&SLCF PBZ=2.000, QUANTITY='W-VELOCITY' /
+&SLCF PBZ=2.700, QUANTITY='W-VELOCITY' /
+&SLCF PBX=8.100, QUANTITY='MASS FRACTION', SPEC_ID='SOOT' /
+&SLCF PBX=8.400, QUANTITY='MASS FRACTION', SPEC_ID='SOOT' /
+&SLCF PBY=1.450, QUANTITY='MASS FRACTION', SPEC_ID='SOOT' /
+&SLCF PBZ=0.300, QUANTITY='MASS FRACTION', SPEC_ID='SOOT' /
+&SLCF PBZ=2.000, QUANTITY='MASS FRACTION', SPEC_ID='SOOT' /
+&SLCF PBZ=2.700, QUANTITY='MASS FRACTION', SPEC_ID='SOOT' /
+&SLCF PBX=8.100, QUANTITY='VELOCITY', VECTOR=.TRUE. /
+&SLCF PBX=8.400, QUANTITY='VELOCITY', VECTOR=.TRUE. /
+&SLCF PBY=1.450, QUANTITY='VELOCITY', VECTOR=.TRUE. /
+&SLCF PBZ=0.300, QUANTITY='VELOCITY', VECTOR=.TRUE. /
+&SLCF PBZ=2.000, QUANTITY='VELOCITY', VECTOR=.TRUE. /
+&SLCF PBZ=2.700, QUANTITY='VELOCITY', VECTOR=.TRUE. /
+
+&BNDF QUANTITY='WALL TEMPERATURE' /
+&BNDF QUANTITY='NET HEAT FLUX' /
+
+&TAIL /
