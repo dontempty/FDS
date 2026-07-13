@@ -951,6 +951,10 @@ def parse_args() -> argparse.Namespace:
                    help="Sub-meshes per axis (must divide IJK).")
     p.add_argument("--fire-xb", nargs=4, type=float, default=list(FIRE_XB),
                    metavar=("XMIN", "XMAX", "YMIN", "YMAX"))
+    p.add_argument("--fire-diameter", type=float, default=None, metavar="D",
+                   help="Square fire pool of side D [m] centred at FIRE_CENTER "
+                        f"({FIRE_CENTER[0]},{FIRE_CENTER[1]}). Overrides --fire-xb; "
+                        "e.g. --fire-diameter 1.0 for a 1 m fire.")
     p.add_argument("--open", nargs="*", default=[],
                    choices=["XMIN", "XMAX", "YMIN", "YMAX", "ZMIN", "ZMAX"])
     p.add_argument("--fuel", default=FUEL)
@@ -998,6 +1002,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     a = parse_args()
+    # --fire-diameter: build a square footprint of side D centred at FIRE_CENTER,
+    # overriding --fire-xb so "1 m fire" is a single number.
+    if a.fire_diameter is not None:
+        cx, cy = FIRE_CENTER
+        half = a.fire_diameter / 2.0
+        a.fire_xb = [cx - half, cx + half, cy - half, cy + half]
     cfg = Cfg(
         chid=a.chid,
         x_min=a.xb[0], x_max=a.xb[1],
