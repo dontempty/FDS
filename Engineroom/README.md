@@ -16,7 +16,7 @@ cd $ENG
 
 # 1) 입력(.fds) 생성  — 예: 1 m 화재, HRR 10 s에 peak, 환기 20 s부터
 python3 gen_engine_room_wall.py \
-    --chid fire1_p10_v20_M5 --out Inputs/fire1_p10_v20_M5.fds \
+    --chid fire1_p10_v20_M5 --out Inputs/scenario/fire1_p10_v20_M5.fds \
     --ijk 180 140 40 --mesh-split 4 4 2 --t-end 360 --floor-thickness 1.5 \
     --fire-diameter 1.0 --hrr-t2-tpeak 10 --vent-start 20
 
@@ -39,6 +39,11 @@ FDS/
     ├── gen_engine_room_wall.py   ← 입력(.fds) 생성기 (핵심 스크립트)
     ├── README.md                 ← 이 문서
     ├── Inputs/                    ← 생성된 .fds 원본 (canonical, 실행 시 읽는 파일)
+    │   ├── peak_time/             ·   0.79 m² 화재 peak 스윕 (peak05..20_M5)
+    │   ├── peak_time_fire1/       ·   1.0 m² 화재 peak 스윕 (peak05..20_fire1_M5)
+    │   ├── vent_timing/           ·   환기 시작시각 스윕 (warm_M5, _v20, _v40)
+    │   ├── scenario/              ·   복합 시나리오 (fire1_p10_v20_M5)
+    │   └── grid_conv/             ·   격자수렴 베이스 (e_M5)
     ├── sbatch/                    ← 케이스별 SLURM 제출 스크립트 (모두 여기 모음)
     ├── Results/<chid>/            ← 실행 출력 (.out .smv 슬라이스 .s3d 로그 등)
     └── Analysis/
@@ -147,15 +152,15 @@ cd /shared/home/wel1come1234/workspace/FDS/Engineroom
 
 # 1 m 화재 / HRR 10 s peak / 환기 20 s부터 (M5, 32메쉬, 360 s)
 python3 gen_engine_room_wall.py \
-    --chid fire1_p10_v20_M5 --out Inputs/fire1_p10_v20_M5.fds \
+    --chid fire1_p10_v20_M5 --out Inputs/scenario/fire1_p10_v20_M5.fds \
     --ijk 180 140 40 --mesh-split 4 4 2 --t-end 360 --floor-thickness 1.5 \
     --fire-diameter 1.0 --hrr-t2-tpeak 10 --vent-start 20
 ```
 생성 후 확인:
 ```bash
-grep -m1 "! Fire" Inputs/fire1_p10_v20_M5.fds          # 화염 면적/HRR
-grep "fire_hrr" Inputs/fire1_p10_v20_M5.fds | grep "F=1.000000" | head -1   # peak 시각
-grep "vent_ramp" Inputs/fire1_p10_v20_M5.fds           # 환기 램프
+grep -m1 "! Fire" Inputs/scenario/fire1_p10_v20_M5.fds          # 화염 면적/HRR
+grep "fire_hrr" Inputs/scenario/fire1_p10_v20_M5.fds | grep "F=1.000000" | head -1   # peak 시각
+grep "vent_ramp" Inputs/scenario/fire1_p10_v20_M5.fds           # 환기 램프
 ```
 
 ---
@@ -167,7 +172,7 @@ grep "vent_ramp" Inputs/fire1_p10_v20_M5.fds           # 환기 램프
 1. `--output` → `Results/<chid>/<chid>.slurm.<jobid>.log` (절대경로)
 2. `mkdir -p Results/<chid>` → 없으면 생성
 3. `cd Results/<chid>` → FDS 출력이 여기 쌓임
-4. `mpirun -np 32 <FDS binary> Inputs/<chid>.fds` → **원본 입력**을 읽음
+4. `mpirun -np 32 <FDS binary> Inputs/<category>/<chid>.fds` → **원본 입력**을 읽음
 
 ### 4.1 새 케이스용 sbatch 만들기
 
@@ -195,7 +200,7 @@ cd       $ENG/Results/fire1_p10_v20_M5
 echo "host=$(hostname) ranks=32 start=$(date)"
 stdbuf -oL -eL mpirun -np 32 \
     /shared/home/wel1come1234/workspace/FDS/Build/impi_intel_linux/fds_impi_intel_linux \
-    $ENG/Inputs/fire1_p10_v20_M5.fds
+    $ENG/Inputs/scenario/fire1_p10_v20_M5.fds
 echo "done=$(date)"
 ```
 
@@ -276,7 +281,7 @@ $PY plot_dy_profiles.py both        # → convergence/{peak,fire1}/*_dy_*.png
 | `fire1_p10_v20_M5` | 1.0 m² 화재, HRR 10 s peak, **환기 20 s 시작** |
 | `warm_M5` / `warm_M5_v20` | 화재만 굽다 환기 60/20 s 시작 (48메쉬 6×4×2) |
 
-`Inputs/<chid>.fds`, `sbatch/run_<chid>.sbatch`, `Results/<chid>/`가 같은 `<chid>`로
+`Inputs/<category>/<chid>.fds`, `sbatch/run_<chid>.sbatch`, `Results/<chid>/`가 같은 `<chid>`로
 묶입니다.
 
 ---

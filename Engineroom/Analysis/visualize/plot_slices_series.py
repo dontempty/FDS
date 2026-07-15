@@ -23,14 +23,19 @@ SERIES = sys.argv[1] if len(sys.argv) > 1 else "fire1"
 OUT  = ROOT / "Analysis" / "visualize" / "vis" / SERIES
 OUT.mkdir(parents=True, exist_ok=True)
 
-WIN = (300.0, 360.0)   # quasi-steady phase (runs reach T_END=360 s)
-
-_TMPL = {"peak": "peak{tp:02d}_M5", "fire1": "peak{tp:02d}_fire1_M5"}
-_TAG  = {"peak": "0.79 m2 fire", "fire1": "1.0 m2 fire"}
-if SERIES not in _TMPL:
-    sys.exit(f"series must be one of {list(_TMPL)}")
-MESHES = [(_TMPL[SERIES].format(tp=tp),
-           f"HRR peak @{tp} s ({_TAG[SERIES]})") for tp in (5, 10, 15, 20)]
+# series -> dict(tag, win, cases=[(case_dir, short_label), ...])
+_REG = {
+    "peak":  dict(tag="0.79 m2 fire", win=(300.0, 360.0),
+                  cases=[(f"peak{tp:02d}_M5", f"HRR peak @{tp} s") for tp in (5,10,15,20)]),
+    "fire1": dict(tag="1.0 m2 fire", win=(300.0, 360.0),
+                  cases=[(f"peak{tp:02d}_fire1_M5", f"HRR peak @{tp} s") for tp in (5,10,15,20)]),
+    "fire1_vent": dict(tag="1.0 m2 fire, HRR peak 10 s", win=(240.0, 300.0),
+                       cases=[(f"fire1_p10_v{v}_M5", f"vent @{v} s") for v in (20,30,40)]),
+}
+if SERIES not in _REG:
+    sys.exit(f"series must be one of {list(_REG)}")
+WIN = _REG[SERIES]["win"]   # time-averaging window for slices
+MESHES = [(c, f"{lbl} ({_REG[SERIES]['tag']})") for c, lbl in _REG[SERIES]["cases"]]
 
 # Slice definitions: (orientation, target_coord, xlabel, ylabel, xlim, ylim, vmin, vmax, label)
 SLICES = [

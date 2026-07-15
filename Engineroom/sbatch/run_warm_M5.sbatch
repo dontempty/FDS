@@ -21,5 +21,5 @@ mkdir -p /shared/home/wel1come1234/workspace/FDS/Engineroom/Results/warm_M5
 cd /shared/home/wel1come1234/workspace/FDS/Engineroom/Results/warm_M5
 
 echo "host=$(hostname)  ranks=48  start=$(date)"
-stdbuf -oL -eL mpirun -np 48 $FDS /shared/home/wel1come1234/workspace/FDS/Engineroom/Inputs/warm_M5.fds
+stdbuf -oL -eL mpirun -np 48 $FDS /shared/home/wel1come1234/workspace/FDS/Engineroom/Inputs/vent_timing/warm_M5.fds
 echo "done=$(date)"

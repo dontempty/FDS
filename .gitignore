@@ -114,6 +114,13 @@ Build/cmakeb/
 # Ignore everything under such directories
 *UNTRACKED*/**
 
-# Build
+# ============================================================
+# Engineroom study (user project) — machine-specific / heavy outputs
+# ============================================================
+# Compiled FDS binary + build objects (the build SCRIPTS make_fds.sh/makefile
+# stay tracked, so FDS can still be rebuilt after cloning on another server).
 Build/
-Engineroom/Results
+
+# Simulation outputs (~19 GB; regenerate by running the .fds inputs).
+# Already-committed files here are untracked with `git rm -r --cached`.
+Engineroom/Results/

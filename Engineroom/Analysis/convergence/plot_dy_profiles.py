@@ -42,13 +42,15 @@ SLICE_X       = 8.1
 FIRE_CENTER_Y = 1.45
 DY_VALUES     = np.round(np.arange(15) * 0.1, 1)   # 0.0 … 1.4 m
 Z_PLOT        = np.linspace(0.0, 3.0, 61)
-WIN_AVG       = (0.0, 360.0)
-
+# series -> dict(tag, win, cases=[(case_dir, subplot_label), ...])
 SERIES = {
-    "peak":  ("peak{tp:02d}_M5",       "0.79 m^2 fire"),
-    "fire1": ("peak{tp:02d}_fire1_M5", "1.0 m^2 fire"),
+    "peak":  dict(tag="0.79 m^2 fire", win=(0.0, 360.0),
+                  cases=[(f"peak{tp:02d}_M5", f"HRR peak @{tp} s") for tp in (5,10,15,20)]),
+    "fire1": dict(tag="1.0 m^2 fire", win=(0.0, 360.0),
+                  cases=[(f"peak{tp:02d}_fire1_M5", f"HRR peak @{tp} s") for tp in (5,10,15,20)]),
+    "fire1_vent": dict(tag="1.0 m^2 fire, HRR peak 10 s", win=(0.0, 300.0),
+                       cases=[(f"fire1_p10_v{v}_M5", f"vent @{v} s") for v in (20,30,40)]),
 }
-PEAK_TIMES = [5, 10, 15, 20]
 CMAP = plt.cm.viridis
 NORM = Normalize(vmin=DY_VALUES.min(), vmax=DY_VALUES.max())
 
@@ -92,7 +94,7 @@ def find_yz_temp(sim):
     return min(cands, key=lambda t: t[0])[1] if cands else None
 
 
-def T_avg_profiles(sim, win=WIN_AVG):
+def T_avg_profiles(sim, win=(0.0, 360.0)):
     """Return dict Δy -> T(Z_PLOT) averaged over the window at y=centre+Δy."""
     sl = find_yz_temp(sim)
     if sl is None:
@@ -122,21 +124,23 @@ def style_ax(ax):
 
 
 def run_series(series):
-    tmpl, tag = SERIES[series]
+    spec = SERIES[series]
+    tag, win, cases = spec["tag"], spec["win"], spec["cases"]
     OUT = CONV / series; OUT.mkdir(parents=True, exist_ok=True)
     print(f"=== series '{series}' ({tag}) -> {OUT} ===")
 
     refs = (load_ref(REF_M1), load_ref(REF_M5))
 
-    panel_fig, panel_axs = plt.subplots(2, 2, figsize=(13, 11))
-    panel_axs = panel_axs.ravel()
+    ncase = len(cases)
+    ncol = 2; nrow = (ncase + ncol - 1) // ncol
+    panel_fig, panel_axs = plt.subplots(nrow, ncol, figsize=(13, 5.5 * nrow))
+    panel_axs = np.atleast_1d(panel_axs).ravel()
 
-    for k, tp in enumerate(PEAK_TIMES):
-        case = tmpl.format(tp=tp)
+    for k, (case, sub_lbl) in enumerate(cases):
         sim = load_sim(case)
         if sim is None:
             continue
-        profiles = T_avg_profiles(sim)
+        profiles = T_avg_profiles(sim, win)
         if profiles is None:
             print(f"  {case}: no YZ temp slice"); continue
 
@@ -147,7 +151,7 @@ def run_series(series):
         plot_refs(ax, refs)
         style_ax(ax)
         ax.set_title(f"{case}  —  T(z) vs Δy\n"
-                     f"x={SLICE_X} m, avg {WIN_AVG[0]:.0f}-{WIN_AVG[1]:.0f} s "
+                     f"x={SLICE_X} m, avg {win[0]:.0f}-{win[1]:.0f} s "
                      f"[{tag}]", fontsize=13)
         cb = fig.colorbar(ScalarMappable(norm=NORM, cmap=CMAP), ax=ax,
                           ticks=DY_VALUES[::2])
@@ -163,11 +167,14 @@ def run_series(series):
             pax.plot(Z_PLOT, profiles[dy], "-", lw=1.6, color=CMAP(NORM(dy)))
         plot_refs(pax, refs, legend=(k == 0))
         style_ax(pax)
-        pax.set_title(f"HRR peak @{tp} s", fontsize=13)
+        pax.set_title(sub_lbl, fontsize=13)
+
+    for j in range(ncase, len(panel_axs)):   # hide unused subplots
+        panel_axs[j].axis("off")
 
     panel_fig.suptitle(
         f"Engine-room T(z) vs Δy offset  [{series}: {tag}]  "
-        f"(x={SLICE_X} m, avg {WIN_AVG[0]:.0f}-{WIN_AVG[1]:.0f} s)", fontsize=15)
+        f"(x={SLICE_X} m, avg {win[0]:.0f}-{win[1]:.0f} s)", fontsize=15)
     panel_fig.tight_layout(rect=(0, 0, 0.92, 0.97))
     cax = panel_fig.add_axes([0.94, 0.12, 0.015, 0.76])
     cb = panel_fig.colorbar(ScalarMappable(norm=NORM, cmap=CMAP), cax=cax,

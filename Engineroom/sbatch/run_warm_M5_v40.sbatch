@@ -17,5 +17,5 @@ export I_MPI_HYDRA_BOOTSTRAP=fork
 mkdir -p /shared/home/wel1come1234/workspace/FDS/Engineroom/Results/warm_M5_v40
 cd /shared/home/wel1come1234/workspace/FDS/Engineroom/Results/warm_M5_v40
 echo "host=$(hostname)  ranks=48  vent_start=40s  start=$(date)"
-stdbuf -oL -eL mpirun -np 48 /shared/home/wel1come1234/workspace/FDS/Build/impi_intel_linux/fds_impi_intel_linux /shared/home/wel1come1234/workspace/FDS/Engineroom/Inputs/warm_M5_v40.fds
+stdbuf -oL -eL mpirun -np 48 /shared/home/wel1come1234/workspace/FDS/Build/impi_intel_linux/fds_impi_intel_linux /shared/home/wel1come1234/workspace/FDS/Engineroom/Inputs/vent_timing/warm_M5_v40.fds
 echo "done=$(date)"

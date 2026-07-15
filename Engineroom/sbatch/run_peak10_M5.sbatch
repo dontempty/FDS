@@ -17,5 +17,5 @@ export I_MPI_HYDRA_BOOTSTRAP=fork
 mkdir -p /shared/home/wel1come1234/workspace/FDS/Engineroom/Results/peak10_M5
 cd /shared/home/wel1come1234/workspace/FDS/Engineroom/Results/peak10_M5
 echo "host=$(hostname)  ranks=32  hrr_tpeak=10s  vent_start=0s  start=$(date)"
-stdbuf -oL -eL mpirun -np 32 /shared/home/wel1come1234/workspace/FDS/Build/impi_intel_linux/fds_impi_intel_linux /shared/home/wel1come1234/workspace/FDS/Engineroom/Inputs/peak10_M5.fds
+stdbuf -oL -eL mpirun -np 32 /shared/home/wel1come1234/workspace/FDS/Build/impi_intel_linux/fds_impi_intel_linux /shared/home/wel1come1234/workspace/FDS/Engineroom/Inputs/peak_time/peak10_M5.fds
 echo "done=$(date)"

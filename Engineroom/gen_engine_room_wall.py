@@ -519,6 +519,9 @@ class Cfg:
     coldflow: bool = False       # suppress fire SURF/RAMP/VENT; ventilation only
     restart_from: float = 0.0   # >0 → RESTART=.TRUE., T_BEGIN=restart_from, ramp shifted
     fire_start: float = 0.0     # >0 → fire RAMP starts at this time (F=0 before)
+    engine_tz: bool = False     # emit engine-footprint x,y-avg T(z) VOLUME MEAN DEVC slabs
+    ceiling_backing: str = "exposed"  # ZMAX ceiling: 'exposed'(steel, loses heat) |
+                                      # 'insulated'(steel, back-face adiabatic) | 'adiabatic'(no heat transfer)
 
 
 # ---------- validation -------------------------------------------------------
@@ -765,6 +768,12 @@ def build_input(cfg: Cfg) -> str:
           f"BACKING='EXPOSED', COLOR='{col}' /")
     p(f"&SURF ID='surf_floor', MATL_ID='STEEL', THICKNESS={cfg.floor_thickness}, "
       "BACKING='EXPOSED', COLOR='GRAY' /")
+    if cfg.ceiling_backing == "adiabatic":
+        p("&SURF ID='surf_ceiling', ADIABATIC=.TRUE., COLOR='WHITE' /  "
+          "! ADIABATIC ceiling (no heat transfer)")
+    elif cfg.ceiling_backing == "insulated":
+        p(f"&SURF ID='surf_ceiling', MATL_ID='STEEL', THICKNESS={WALL_THICKNESS}, "
+          "BACKING='INSULATED', COLOR='WHITE' /  ! steel ceiling, back face insulated")
     p(f"&SURF ID='fire', COLOR='RED', HRRPUA={hrrpua:.3f}, RAMP_Q='fire_hrr' /")
     p("")
 
@@ -804,7 +813,10 @@ def build_input(cfg: Cfg) -> str:
     p("")
 
     # ---- ceiling
-    p("&VENT MB='ZMAX', SURF_ID='surf_wall_white' /  ! ceiling — steel")
+    if cfg.ceiling_backing in ("adiabatic", "insulated"):
+        p(f"&VENT MB='ZMAX', SURF_ID='surf_ceiling' /  ! ceiling — {cfg.ceiling_backing}")
+    else:
+        p("&VENT MB='ZMAX', SURF_ID='surf_wall_white' /  ! ceiling — steel (exposed)")
     p("")
 
     # ---- fire VENT (no overlap with floor patches)
@@ -886,6 +898,32 @@ def build_input(cfg: Cfg) -> str:
           f"QUANTITY='{qty}', HIDE_COORDINATES=.TRUE. /  "
           f"! above main engine centre, z=[{me_z_lo},{me_z_hi}]")
     p("")
+
+    # ---- engine-footprint horizontal-average T(z) slabs (x,y VOLUME MEAN per z-cell)
+    # One DEVC per z grid-cell spanning the FULL main-engine footprint in x,y and
+    # exactly one cell in z, using SPATIAL_STATISTIC='VOLUME MEAN'.  Together they
+    # give the x,y-averaged vertical temperature profile T̄(z,t) over the engine,
+    # written to the DEVC .csv — cheap (scalars per DT_DEVC), no 3D/PLOT3D dump.
+    # Range = engine top (solid below) → ceiling, i.e. the gas gap above the engine.
+    if cfg.engine_tz:
+        eng = next((e for e in cfg.equipment if e.label == "main_engine"), None)
+        if eng is not None:
+            p(f"! Engine-footprint x,y-averaged T(z): one VOLUME MEAN DEVC per z-cell")
+            p(f"!   footprint x=[{eng.x1},{eng.x2}] y=[{eng.y1},{eng.y2}], "
+              f"engine top z={eng.z2}, ceiling z={cfg.z_max}, dz={dz:.4f} m")
+            k0 = 0
+            for k in range(cfg.nz):
+                zc = cfg.z_min + (k + 0.5) * dz          # z cell-centre
+                if zc < eng.z2 - 1e-9 or zc > cfg.z_max + 1e-9:
+                    continue                             # skip cells inside/below engine
+                zlo, zhi = zc - dz / 2, zc + dz / 2       # this cell's z-bounds
+                p(f"&DEVC ID='engTz_{k0:02d}', "
+                  f"XB={eng.x1},{eng.x2},{eng.y1},{eng.y2},{zlo:.4f},{zhi:.4f}, "
+                  f"QUANTITY='TEMPERATURE', SPATIAL_STATISTIC='VOLUME MEAN' /  "
+                  f"! x,y-avg T at z={zc:.4f} m")
+                k0 += 1
+            p(f"! ({k0} engine-Tz slabs emitted)")
+            p("")
 
     # ---- slices: paper Fig 6 monitoring planes (x=8.1, 8.4, y=1.45, z=2.0)
     # x=8.1 / x=8.4 flank the fire at x=[7.75,8.75] from each side, y=1.45 is
@@ -997,6 +1035,18 @@ def parse_args() -> argparse.Namespace:
                    help="Restart run: add RESTART=.TRUE., T_BEGIN=T, shift HRR ramp by T")
     p.add_argument("--fire-start", type=float, default=0.0, metavar="T_FIRE",
                    help="Delay fire ignition: RAMP=0 for t<T_FIRE, then t² growth")
+    p.add_argument("--engine-tz", action="store_true",
+                   help="Emit engine-footprint x,y-averaged T(z) DEVCs: one VOLUME MEAN "
+                        "temperature slab per z-cell from engine top to ceiling "
+                        "(gives T̄(z,t) over the main-engine footprint as CSV, no PLOT3D).")
+    p.add_argument("--ceiling-backing", choices=["exposed", "insulated", "adiabatic"],
+                   default="exposed",
+                   help="ZMAX ceiling thermal boundary: 'exposed'=steel losing heat to "
+                        "ambient (default); 'insulated'=steel with adiabatic back face "
+                        "(keeps heat, still absorbs into the slab); 'adiabatic'=no heat "
+                        "transfer at all (hottest). Raises ceiling gas temp exposed<insulated<adiabatic.")
+    p.add_argument("--ceiling-insulated", action="store_true",
+                   help="Shortcut for --ceiling-backing adiabatic.")
     return p.parse_args()
 
 
@@ -1035,6 +1085,8 @@ def main() -> None:
         coldflow=a.coldflow,
         restart_from=a.restart_from,
         fire_start=a.fire_start,
+        engine_tz=a.engine_tz,
+        ceiling_backing=("adiabatic" if a.ceiling_insulated else a.ceiling_backing),
     )
     cfg.centerline_spec = []
     for item in a.centerline_spec:

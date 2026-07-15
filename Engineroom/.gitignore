@@ -1,0 +1,19 @@
+# Engineroom FDS study — ignore machine-specific / regenerable artifacts
+# so the project clones cleanly and re-runs on another server.
+# (FDS output extensions like *.s3d *.sf *.smv *_devc.csv are already ignored
+#  by the top-level FDS/.gitignore.)
+
+# ---- simulation outputs (large; also ignored at repo root) ----
+Results/
+
+# ---- SLURM job logs ----
+*.slurm.*.log
+slurm-*.out
+
+# ---- Python / Jupyter caches ----
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# ---- scratch ----
+*.tmp
