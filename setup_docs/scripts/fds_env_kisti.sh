@@ -1,8 +1,8 @@
 #!/bin/bash
 # FDS build/run environment for KISTI Neuron (glogin0X).
-# Usage: source /scratch/x3319a05/fds/deps/fds_env_kisti.sh
+# Usage: source /scratch/x3319a05/FDS/setup_docs/scripts/fds_env_kisti.sh
 
-export FDS_ROOT=/scratch/x3319a05/fds
+export FDS_ROOT=/scratch/x3319a05/FDS
 export FIREMODELS=$FDS_ROOT/deps
 export FDS_BIN=$FDS_ROOT/Build/impi_intel_linux/fds_impi_intel_linux
 
