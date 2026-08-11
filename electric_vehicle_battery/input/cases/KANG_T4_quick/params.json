@@ -1,0 +1,209 @@
+{
+  "case": {
+    "chid": "KANG_T4_quick",
+    "title": "Kang et al. Test 4 - smoke test",
+    "t_end": 300.0,
+    "tmpa": 20.0,
+    "grid": {
+      "xmin": -4.0,
+      "xmax": 4.0,
+      "ymin": -5.0,
+      "ymax": 5.0,
+      "zmin": 0.0,
+      "zmax": 6.0,
+      "dx": 0.125,
+      "nmesh": [
+        2,
+        2,
+        1
+      ],
+      "cuts": [
+        [
+          -0.375
+        ],
+        [
+          -0.125
+        ],
+        null
+      ]
+    },
+    "veh": {
+      "length": 4.18,
+      "width": 1.8,
+      "height": 1.57,
+      "z_floor": 0.45,
+      "z_belt": 1.0,
+      "cabin_len": 2.0,
+      "cabin_dy": 0.0,
+      "cabin_inset": 0.15,
+      "pillar_b": 0.25
+    },
+    "tire": {
+      "section_width_mm": 235.0,
+      "aspect_ratio_pct": 45.0,
+      "rim_inch": 18.0,
+      "wheelbase": 2.6,
+      "outer_x": 0.85,
+      "mass_kg": 40.0,
+      "density": 1100.0,
+      "specific_heat": 1.8,
+      "conductivity": 0.25,
+      "boiling_temperature": 420.0,
+      "heat_of_reaction": 2200.0,
+      "absorption_coefficient": 1000.0,
+      "emissivity": 0.95
+    },
+    "glass": {
+      "thickness": 0.006,
+      "density": 2500.0,
+      "specific_heat": 0.84,
+      "conductivity": 1.05,
+      "emissivity": 0.9,
+      "combustible": false,
+      "open_windows": [
+        "FL",
+        "RL"
+      ],
+      "open_height": 0.25
+    },
+    "frame": {
+      "shell": 0.125,
+      "density": 900.0,
+      "specific_heat": 1.5,
+      "conductivity": 0.2,
+      "boiling_temperature": 380.0,
+      "heat_of_reaction": 1800.0,
+      "absorption_coefficient": 1000.0,
+      "emissivity": 0.9,
+      "formula": "C6H10O1",
+      "heat_of_combustion": 28800.0,
+      "soot_yield": 0.1,
+      "co_yield": 0.05,
+      "radiative_fraction": 0.35,
+      "fuel_mass_kg": 262.0
+    },
+    "pack": {
+      "length": 1.6,
+      "width": 1.2,
+      "height": 0.15,
+      "gap_to_floor": 0.1,
+      "z_bot": null,
+      "dy": 0.0
+    },
+    "vent": {
+      "zone_len": 0.5,
+      "sides": [
+        "XMIN",
+        "XMAX"
+      ]
+    },
+    "gas": {
+      "composition": {
+        "H2": 28.0,
+        "CO": 23.0,
+        "CO2": 28.0,
+        "CH4": 12.0,
+        "C2H4": 9.0
+      },
+      "soot_yield": 0.02,
+      "co_yield": 0.05,
+      "radiative_fraction": 0.15,
+      "heat_of_combustion": null,
+      "track_hf": true
+    },
+    "hrr": {
+      "csv": "pack_HRR.csv",
+      "t_unit": 60.0,
+      "q_unit": 1000.0,
+      "scale": 1.0,
+      "clip_negative": true
+    },
+    "ramp_eps": 0.004,
+    "dt_hrr": 1.0,
+    "dt_devc": 1.0,
+    "dt_slcf": 5.0,
+    "dt_bndf": 20.0,
+    "walltime": "06:00:00"
+  },
+  "qa": {
+    "a_frame": 38.6875,
+    "a_glass": 3.5625,
+    "a_tire": 4.125,
+    "a_pack": 4.4375,
+    "t_body": 0.00637587506731287,
+    "t_frame": 0.00637587506731287,
+    "t_tire": 0.008815426997245178,
+    "t_glass": 0.006,
+    "thr_body_GJ": 7.5456,
+    "dstar": 2.118055488681614,
+    "dstar_over_dx": 16.94444390945291,
+    "n_asymmetric": 0,
+    "n_frame_components": 1,
+    "void_m3": 2.8671875,
+    "pack_blocked": [],
+    "vent_area": 4.4375
+  },
+  "paper": {
+    "vehicle": {
+      "length": 4180.0,
+      "width": 1800.0,
+      "height": 1570.0
+    },
+    "rig": {
+      "width": 3100.0,
+      "length": 5200.0,
+      "z_pipe": 2270.0,
+      "z_win": 1270.0
+    },
+    "centreline_x": 1550.0,
+    "window_line_x": 890.0,
+    "tc_chain": [
+      890.0,
+      1040.0,
+      160.0,
+      640.0,
+      560.0,
+      800.0,
+      1110.0
+    ],
+    "targets": {
+      "LIB pack": {
+        "pHRR_MW": 1.54,
+        "THR_GJ": 1.3,
+        "m_ini": 449.0,
+        "dm": 28.0,
+        "dHc": 45.9
+      },
+      "BEV body": {
+        "pHRR_MW": 7.81,
+        "THR_GJ": 7.53,
+        "m_ini": 1206.0,
+        "dm": 262.0,
+        "dHc": 28.8
+      },
+      "BEV_2": {
+        "pHRR_MW": 6.51,
+        "THR_GJ": 8.45,
+        "m_ini": 1540.0,
+        "dm": 284.0,
+        "dHc": 29.8
+      },
+      "BEV_3": {
+        "pHRR_MW": 7.25,
+        "THR_GJ": 9.03,
+        "m_ini": 1685.0,
+        "dm": 296.0,
+        "dHc": 30.5
+      }
+    },
+    "t_peak_min": [
+      11.0,
+      17.0
+    ],
+    "burn_min": 70.0,
+    "theta_MW_s2": [
+      0.0085,
+      0.02
+    ]
+  }
+}

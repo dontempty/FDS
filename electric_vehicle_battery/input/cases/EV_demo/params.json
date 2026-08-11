@@ -1,0 +1,111 @@
+{
+  "case": {
+    "chid": "EV_demo",
+    "title": "KRISO-Fire 1D-3D coupling example (EV pack + vehicle body)",
+    "t_end": 900.0,
+    "tmpa": 20.0,
+    "grid": {
+      "xmin": 0.0,
+      "xmax": 10.0,
+      "ymin": 0.0,
+      "ymax": 6.0,
+      "zmin": 0.0,
+      "zmax": 5.0,
+      "dx": 0.125,
+      "nmesh": [
+        2,
+        1,
+        2
+      ],
+      "cuts": [
+        [
+          4.75
+        ],
+        null,
+        null
+      ]
+    },
+    "veh": {
+      "cx": 5.0,
+      "cy": 3.0,
+      "length": 4.5,
+      "width": 1.8,
+      "z_pack_bot": 0.15,
+      "z_pack_top": 0.4,
+      "z_floor_top": 0.6,
+      "z_hood": 1.05,
+      "z_belt": 1.2,
+      "z_trunk": 1.15,
+      "z_roof": 1.75,
+      "f_hood_end": 0.29,
+      "f_cabin_start": 0.35,
+      "f_cabin_end": 0.8,
+      "f_rear_start": 0.86,
+      "f_pillar": 0.07,
+      "cabin_inset": 0.15,
+      "tire_d": 0.65,
+      "tire_w": 0.25,
+      "f_axle": 0.189,
+      "pack_len": 2.0,
+      "pack_wid": 1.4
+    },
+    "vent": {
+      "n_zone": 3,
+      "zone_len": 0.5,
+      "sides": [
+        "YMIN",
+        "YMAX"
+      ]
+    },
+    "gas": {
+      "composition": {
+        "H2": 28.0,
+        "CO": 23.0,
+        "CO2": 28.0,
+        "CH4": 12.0,
+        "C2H4": 9.0
+      },
+      "soot_yield": 0.02,
+      "co_yield": 0.05,
+      "radiative_fraction": 0.15,
+      "heat_of_combustion": null,
+      "track_hf": true
+    },
+    "body": {
+      "density": 900.0,
+      "specific_heat": 1.5,
+      "conductivity": 0.2,
+      "boiling_temperature": 350.0,
+      "heat_of_reaction": 500.0,
+      "absorption_coefficient": 1000.0,
+      "emissivity": 0.9,
+      "formula": "C6H10O1",
+      "heat_of_combustion": 25000.0,
+      "soot_yield": 0.1,
+      "co_yield": 0.05,
+      "radiative_fraction": 0.35,
+      "thickness_body": 0.012,
+      "thickness_tire": 0.02
+    },
+    "casing": {
+      "use_net_heat_flux": true
+    },
+    "ramp_eps": 0.004,
+    "dt_hrr": 1.0,
+    "dt_devc": 1.0,
+    "dt_slcf": 2.0,
+    "dt_bndf": 10.0,
+    "walltime": "08:00:00"
+  },
+  "qa": {
+    "a_body": 25.15625,
+    "a_tire": 3.8125,
+    "a_pack": 4.75,
+    "fuel_kg": 340.3125,
+    "thr_body_GJ": 8.5078125,
+    "thr_batt_MJ": 395.3964390060484,
+    "dstar": 2.088533024831381,
+    "dstar_over_dx": 16.708264198651047,
+    "vent_area": 0.75
+  }
+}

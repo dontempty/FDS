@@ -1,0 +1,1187 @@
+
+
+===== PAGE 1 =====
+Applied Energy 332 (2023) 120497
+Available online 15 December 2022
+0306-2619/© 2022 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY license ( http://creativecommons.org/licenses/by/4.0/).
+Full-scale fire testing of battery electric vehicles 
+Sungwook Kang
+a
+, Minjae Kwon
+a , b
+, Joung Yoon Choi
+a
+, Sengkwan Choi
+c , * 
+a
+Fire Testing & Research Centre, Fire & Disaster Management Division, Korea Conformity Laboratories, Republic of Korea 
+b
+Advanced Functional Nanohybrid Material Laboratory, Department of Chemistry, Dongkuk University, Republic of Korea 
+c
+School of the Built Environment, Ulster University, UK   
+HIGHLIGHTS 
+• The characteristics of BEV fires is comparable with those of conventional passenger cars. 
+• The new combustibles in the battery pack make a minor contribution to the whole magnitude of BEV fires. 
+• The jet flame, caused by thermal runaway, accelerates the fire spread to other combustibles of BEVs. 
+• The uncertainties, induced from unforeseen thermal runaway and reignition, make a major risk to first responders.  
+ARTICLE INFO  
+Keywords: 
+Battery electric vehicle 
+Thermal runaway 
+Lithium-ion battery 
+Full-scale fire testing 
+Thermal behaviour 
+ABSTRACT  
+The market share of electric vehicles, powered by lithium-ion batteries (LIB), has been expanding worldwide 
+with the global momentum towards green technology and improving the driving range on one full-charge. 
+Studies are, however, still required on the fire safety of the latest but unmatured technology due to a distinc -
+tive phenomenon called thermal runaway. In this study, a series of full-scale fire experiments were conducted, 
+focusing on the understanding of thermal behaviours of battery electric vehicle (BEV) fires. To provide up-to-date 
+information on BEV fires, the latest BEV model with a high electric-energy capacity (64 kWh) was selected. For 
+comparative analysis purposes, a LIB pack and a BEV body were tested individually after being physically dis -
+assembled. An internal combustion engine vehicle and a hydrogen fuel cell electric vehicle were also tested. 
+During testing, the combustion of the BEV fires continued for approximately 70 min, resulting in critical mea -
+sures of burning being determined; peak heat release rate (pHRR), total heat released (THR), fire growth 
+parameter, and the average effective heat of combustion were measured to be 6.51 – 7.25 MW, 8.45 – 9.03 GJ, 
+0.0085 – 0.020, and 29.8 – 30.5 MJ/kg, respectively. It was also observed that the pHRR and THR were governed 
+by the combustion characteristics of typical combustible materials in the passenger cabin, rather than by that of 
+particular contents in the LIB pack with thermal runaway. Instead, a jet fire intensively discharging from the LIB 
+pack led to a rapid flame spreading to adjacent combustible components of the BEV, thereby accelerating the fire 
+growth. The findings could contribute to the activities of the first responders to BEV fire accidents, fire safety 
+engineers, and structural member designers. This study also makes public the measured thermal quantities for 
+further studies on the fire safety of existing or designing car-parking related structures.   
+1. Introduction 
+Greatest attention is currently focused on electric vehicles relying on 
+electric battery energy as a power source, although the fundamental 
+idea of these vehicles was invented in the 1800 s [1] . Their market share 
+has been rapidly expanding against that of the conventional internal 
+combustion engine vehicle (ICEV), as electric vehicles represent green 
+technology as well as providing extraordinary driving performance. 
+Electric vehicle sales, including those of plug-in hybrid electric vehicles 
+(PHEV), globally reached 6.75 million units in 2021, approximately 
+10.1 % of the market share of car sales worldwide [2] . Concurrently, the 
+capacity of electric vehicle battery packs has been gradually improving 
+to meet the growing demand for a longer driving range on one full- 
+charge; for example, in the U.S. market, the average capacity 
+increased from 41.2 kWh in 2015 to 70.5 kWh in 2020 [3] . 
+In 2006 a massive electronics industry recall occurred in the global 
+laptop industries and in 2016 the production of an electronic device 
+* Corresponding author at: Belfast School of Architecture & the Built Environment, Ulster University, 2-24 York Street, Belfast BT15 1AF, UK. 
+E-mail address: s.choi@ulster.ac.uk (S. Choi).  
+Contents lists available at ScienceDirect 
+Applied Energy 
+journal homepag e: www.else vier.com/loc ate/apene rgy 
+https://doi.org/10.1016/j.apenergy.2022.120497 
+Received 8 October 2022; Received in revised form 20 November 2022; Accepted 3 December 2022   
+
+===== PAGE 2 =====
+Applied Energy 332 (2023) 120497
+2
+model was permanently ceased, due to thermal runaway incidents 
+originating from the potentially faulty lithium-ion batteries (LIBs) [4 – 5] . 
+Such occasions drew attention to research on LIB safety, as well as to 
+relevant regulations and standards; several LIB safety related standards 
+have been being developed and revised globally for cell-, module-, and 
+even system-level LIBs, such as IEC, ISO, UN, SAE, UL, SAND and GB/T. 
+As the technology on LIB system has not yet fully matured to date, un -
+foreseen fire patterns have been widely reported at various international 
+incidents associated with battery electric vehicles (BEVs). In South 
+Korea, 17 local BEV-fire accidents occurred for the period between 2018 
+and 2021 [6] . In particular, 6 events happened in enclosed areas, such as 
+manufacturing factories and underground car parks in buildings. Under 
+such circumstances, more sever fire behaviour and subsequent damage 
+were evaluated compared to those events that happened in open spaces. 
+As a response to these new fire scenarios, comprehensive revision should 
+be carried out on several technical aspects of design conditions, such as 
+the fire degradation of loadbearing structures (of multi-storey car parks, 
+underground spaces, and tunnels), the capacity of current fire suppres -
+sion systems, and the applicability of the existing fire-suppression stra -
+tegies, before BEVs become the majority of vehicles in societies. 
+In order to carry out these revisions, a list of key input parameters 
+need to be preliminarily determined, in conditions of open and enclosed 
+spaces respectively. The parameters are the rate of heat release (HRR in 
+W) of a burning car, amount of total heat released (THR in J), fire growth 
+coefficient (in W/s
+2
+), fire load (in J/m
+2
+), mass loss (i.e., fuel consump -
+tion), effective heat of combustion (in J/g), incident heat fluxes in the 
+vicinity of the heat source (in W/m
+2
+), flame spread throughout the 
+burning vehicle, and time – temperature profiles of diffusion flames and 
+adjacent structural members. The open space indicates a place where the 
+test vehicle is in the open without re-radiated from heated surrounding, 
+while the enclosed space denotes a place where flame behaviours are 
+affected by surrounding structures, such as multistorey car parks and 
+underground spaces. After determining these parameters, the next step 
+is to theoretically/numerically predict time-dependent temperature 
+distributions throughout spaces, loadbearing members, or local areas 
+covered by a sprinkler system. 
+Since the significant LIB recall in 2006, research on the safety of LIBs 
+has been being conducted worldwide in different levels and objectives, 
+as summarised in Table 1 . The final goal of such studies would be to 
+reach an integrated full-interpretation of the LIB behaviour from mate -
+rial to product levels. As part of the goal, the purpose of this study is to 
+understand the thermal behaviour of BEV fires by full-scale fire testing 
+on recent BEVs with high energy capacities (i.e., Level 6). This article 
+therefore primarily discusses the quantification of the extent of BEV fire 
+hazards in an open-space environment for the first experimental work, 
+as defined in the previous paragraph, to obtain the key parameters under 
+open space and to make public the measured data for further studies. 
+As significant resources are expected to be required for conducting 
+full-scale car fire experiments, such tests have been intermittently per -
+formed worldwide since the 1990 s, mostly on ICEV fires but rarely on 
+both PHEV and BEV fires [7 – 16] ; an analytical approach collated 
+experimental data from several literature of large-scale car fire tests 
+[12] . With respect to the methodologies, some works used oxygen 
+consumption calorimetry (OCC) to physically measure the HRR of car 
+fires [7 – 10,14,16] . For the measurement, the OCC includes the mea -
+surement station which measures velocity, temperature, smoke density, 
+and concentration of combustion gas [17 – 18] . An early attempt to test 
+real-scale ICEVs was made using an open OCC with a 14.2-m
+2
+-cross- 
+section hood and a 0.2-m
+2
+-cross-section duct [7] . Another study con -
+nected a 9-m
+2
+-cross-section hood with another to collect a greater 
+quantity of the combustion products generated from ICEV fires [8] . 
+Since the 2000 s, larger OCC was introduced to test more recently 
+Nomenclature 
+A surface area [m
+2
+] 
+c
+p 
+specific heat [J/(kg.K)] 
+F view factor 
+h convection heat transfer coefficient [W/(m2.K)] 
+˙m mass loss rate [kg/s] 
+˙
+Q thermal energy [W] 
+˙q
+′′
+heat flux [W/m
+2
+] 
+T temperature [K] 
+t time [s] 
+Greek symbols 
+α thermal absorptivity 
+ε thermal emissivity 
+θ growth parameter for t -square fires [MW/s
+2
+] 
+ρ density [kg/m
+3
+] 
+Σ Stefan-Boltzmann constant[W/(m2.K
+4
+)] 
+Subscripts 
+end end 
+f fire 
+g gauge 
+ini initial 
+loss loss 
+s surface 
+∞ surroundings 
+Abbreviations 
+BEV battery electric vehicle 
+FCC fuel consumption calorimetry 
+FCEV fuel cell electric vehicle 
+HRR heat release rate 
+ICEV internal combustion engine vehicle 
+LIB lithium-ion battery 
+OCC oxygen consumption calorimetry 
+PHEV plug-in hybrid electric vehicle 
+pHRR peak heat release rate 
+THR total heat released  
+Table 1 
+Research objectives corresponding to specimen type from the fire safety 
+viewpoint.  
+Level Type of specimen Research objectives 
+1 Component 
+materials 
+Thermochemical/electrochemical characteristics 
+of the unit 
+2 Single cell Thermal characteristics of the unit under thermal/ 
+electrical/mechanical impact conditions, 
+mechanism of gas venting and thermal runaway 
+initiation, and quality/quantity of vent gas 
+3 Multiple cells 
+/single module 
+Thermal characteristics of the unit under thermal/ 
+electrical/mechanical impact conditions, and cell- 
+to-cell thermal runaway/heat propagation 
+4 Multiple modules Module-to-module thermal runaway/heat 
+propagation in horizontal and vertical directions 
+5 Pack Thermal characteristics of the unit under thermal/ 
+electrical/mechanical impact conditions, and 
+pack-to-vehicle body fire spread 
+6 Battery Electric 
+Vehicle (BEV) 
+Magnitude of BEV fire hazards, and BEV-to- 
+adjacent object fire spread  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 3 =====
+Applied Energy 332 (2023) 120497
+3
+manufactured cars which would release greater amounts of heat once 
+ignited [9 – 10,14,16] . There existed an alternative method of estimating 
+the HRR by measuring the weight loss rate of specimens using load cells 
+and adopting a known constant (namely the heat of combustion) in the 
+HRR calculation [11] . This technique uses fuel consumption calorimetry 
+(FCC) without the measurement station, thereby facilitating obtaining 
+HRRs. However, the constant adopted needs to be firmly based on 
+experimental data. In case of BEVs, as less information is available yet, 
+the HRR measurement using the OCC should be preceded with the HRR 
+calculation utilising the FCC only. In this study, both the OCC and FCC 
+were therefore used, thereby measuring HRRs and estimating the 
+average effective heat of combustion of BEV fires for further research. 
+Attempts to experiment on real-scale BEVs began to be made from 
+the early 2010 s [12,14,16] . However, the BEVs in the previous studies 
+were still in their infancy, which involved smaller amounts of low 
+energy-capacity LIBs and flammable plastics than the recent models 
+with at least 30-kWh-LIBs and luxurious interiors [19] . For up-to-date 
+information on BEV fires, three BEVs manufactured in 2020 were 
+experimentally examined in this study. For the first and second tests, as 
+tabulated in Table 2 , a unit of BEVs was disassembled into its body and a 
+LIB pack. This allowed examination of individual contributions of the 
+parts to the global BEV fire. Fires generated from two fully charged BEVs 
+with different energy capacities were studied in the third and fourth 
+tests. The BEV model is indistinguishable from its ICEV version as the 
+two cars were produced from the same manufacturing platform. This 
+ICEV version and a hydrogen fuel-cell electric vehicle (FCEV) were 
+additionally tested in the fifth and sixth experiments to examine the 
+thermal characteristic differences between BEV, ICEV, and FCEV. The 
+six full-scale car fire tests were conducted upon an instrumented rig 
+under a 10-MW-scale OCC of Korea Conformity Laboratories (KCL). 
+2. Experimental 
+2.1. Calorimetry 
+In fire safety engineering, the HRR and THR are critical measures 
+enabling one to evaluate the magnitude of fire events, which are 
+conventionally obtained from calorimeter tests based on the principle of 
+oxygen depletion during combustion developed in the 1970 – 80 s [20] . 
+These parameters for car fires have been rarely measured worldwide as 
+the greater mass that specimens have the larger calorimetry with rele -
+vant facilities is needed. Significant laboratory, financial, technical, and 
+manpower resources are therefore required for such tests. 
+In the present tests, the combustion products released from burning 
+vehicles were collected by means of a 51.5-m
+2
+-cross-section conical 
+hood suspended approximately 8.6 m above the test floor, as shown in 
+Fig. 1 (a). The hood was coupled with a 3.8-m
+2
+-cross-section exhaust 
+duct which was connected to draft fans capable of delivering approxi -
+mately 3,200 m
+3
+/min, as shown in Fig. 1 (b). As a certain amount of 
+oxygen involved in the incoming air flow is expected to be consumed in 
+the course of combustion of the carbon-based object (e.g., vehicles), a 
+reduction in the oxygen concentration relative to the ambient air occurs 
+as a function of time [21 – 22] . This variation is detected by a para -
+magnetic oxygen analyser. The changed oxygen-concentration in mole 
+fraction was used to calculate the factor of oxygen depletion. This factor 
+was subsequently applied to calculate the HRR and THR of tested ob -
+jects, based on the fact that the average heat release per unit mass of 
+oxygen appears to be a constant of 13.1 MJ/kg with a standard deviation 
+of 0.35 MJ/kg [20] . 
+2.2. Specimen 
+Test vehicles were the five-door models with similar dimensions and 
+weights, except FCEV, as listed in Table 2 . The BEV model was reported 
+as developed from the identical manufacturing platform to that used for 
+the existing ICEV version. The flame spreading behaviours in the bodies 
+of the two types of vehicles were therefore assumed to be comparable. 
+The BEV model had two trim-levels in terms of LIB energy capacity, 
+which involved 39- and 64-kWh LIB packs for a normal and a long 
+driving-ranges on one full-charge respectively, as illustrated in Fig. 2 (a) 
+and 2(b). A LIB pack was also mounted on the FCEV trunk. Its energy 
+capacity (1.56 kWh) was much lower than those of BEVs. 
+The LIB packs of the drivable BEVs were fully charged in operating 
+Table 2 
+Specimen features and test conditions.  
+Features and 
+conditions 
+Test 1 Test 2 Test 3 Test 4 Test 
+5 
+Test 
+6 
+LIB pack of 
+BEV_1 
+Body 
+of 
+BEV_1 
+BEV_2 BEV_3 ICEV FCEV 
+Length 
+(mm) 
+N/A 4,180 4,165 4,670 
+Width (mm) N/A 1,800 1,800 1,860 
+Height (mm) N/A 1,570 1,550 1,630 
+Weight (kg) 449 1,206 1,540 1,685 1,320 1,820 
+Nominal 
+total 
+energy 
+capacity 
+of LIB 
+(kWh) 
+64.092 N/A 39.240 64.092 N/A 1.560 
+State of 
+charge of 
+LIB (%) 
+100 N/A 100 100 N/A 20 
+Thermal 
+runaway 
+initiation 
+or flaming 
+ignition 
+Heating a 
+surface of 
+single cell 
+using a 
+heating 
+sheet 
+Heating the 
+vehicles ’ bottom 
+boundaries using 
+a propane burner 
+Heating a 
+surface of 
+single cell 
+using a 
+heating 
+sheet 
+Heating 
+combustible 
+contents of 
+vehicles using a 
+pan of heptane  
+Fig. 1. Large-scale cone calorimetry in KCL.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 4 =====
+Applied Energy 332 (2023) 120497
+4
+conditions before disassembled from the vehicle bodies. The isolated LIB 
+packs were subsequently opened to equip heating sheets, thermocou -
+ples, and voltmeters on the internal LIB cells, as shown in Fig. 2 and 3(a)- 
+(c) . The heating sheets were intended to initiate the thermal runaway of 
+a predetermined cell. The thermocouples were used to examine the heat 
+propagation from the ignited to the surrounding modules inside the 
+packs and to the pack ’ s metal housings. The voltmeters were used to 
+monitor the voltage drops of modules to confirm the thermal runaway. 
+The specifications of the pouch-type LIB cells installed in the BEVs are 
+listed in Table 3 . Fig. 3 (d) shows the distribution of thermocouples in the 
+passenger cabin, motor compartment, trunk, and tyres. For the third and 
+fourth tests, the instrumented LIB-packs and BEV-bodies were reas -
+sembled. Although the reassembled BEVs were operatable, the speci -
+mens were moved upwards and away by a forklift truck for safety 
+purposes as the BEVs ’ cooling system was disconnected. After the 
+preparations, all the specimens were covered with waterproof polyvinyl 
+chloride (PVC) blankets and conditioned indoors for at least 2 weeks 
+before the experiments. 
+2.3. Instrumented test rig 
+To facilitate the measurement of multiple parameters during the 
+large-scale fire testing, a test rig was designed. The rig was composed of 
+a mounting platform, structural steel members (columns and beams), 
+and one-way water-cooled pipes, as shown in Fig. 4 (a). As it was ex -
+pected that fire plumes with high temperature over 800 ℃ would 
+maintain for at least 10 min during each of the tests, tap water at room 
+temperature was allowed to flow through the ceiling and column pipes 
+of the rig to prevent its thermal failure. The rig dimensions were 
+determined based on the Korean regulations for the minimum size of a 
+standard parking space with a 2.5 m width, a 5.0 m length, and a 2.3 m 
+Fig. 2. The layouts of LIB modules in packs with two options.  
+Table 3 
+Specifications of LIB cell.  
+Model Nominal 
+capacity (Ah) 
+Nominal 
+voltage (V) 
+Size (mm) Weight 
+(g) 
+E63B 
+(NCM 
+622) 
+60  3.63 (L)310 × (W) 
+114 × (t)15  
+887.8  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 5 =====
+Applied Energy 332 (2023) 120497
+5
+height. Three types of sensors were installed in the rig, which were the 
+thermocouple, heat flux gauge, and load cell, as illustrated in Fig. 4 :  
+• To measure the temperature of combustion gas above different parts 
+of the vehicle, thermocouples (Model: 24-AWG k-type dual-wall 
+insulated wire) were aligned with the vehicle ’ s longitudinal mid -
+plane on the upper water-cooled pipes (TC_GB, TC_GW, TC_GR, and 
+TC_GCRW), as illustrated in Fig. 4 (b). Thermocouples were also 
+positioned at the mid-height of the vehicle ’ s front- and rear-seat 
+windows (TC_FW and TC_RW at z = 1,270 mm) and at the same x- 
+and y-coordinates but on the upper pipes (TC_GFW and TC_GRW at z 
+= 2,270 mm); 
+• Four water-cooled Schmidt-Boelter gauges (Model: SBG01, Hukse -
+flux) were aligned with the rig edges at z = 1,270 mm, facing the 
+front-bonnet, trunk, left front- and rear-seat windows of vehicles. 
+These positions were intended to estimate the amount of irradiance 
+on a vehicle parked adjacent to a burning BEV;  
+• Four load cells composed of 16 strain gauge transducers that range 
+from 0.5 to 1,000 kg each (Model: R-1000, CAS) were assembled 
+with the mounting platform. The sensors measured the variation in 
+mass of the specimen during the combustion of vehicles. 
+All time-dependent data of temperature, heat flux, and weight were 
+acquired at intervals of 0.1 s using a DAQ system (Model: CompactDAQ, 
+National Instruments). Finally, the specimen was surrounded by eight 
+video cameras to observe its thermal behaviour and fire events. 
+2.4. Procedure 
+A series of instrumented specimens were placed at the centre of the 
+mounting platform in order. For smooth combustion, the front- and rear- 
+seat windows of vehicles ’ left doors were half-opened to allow air flow in 
+to the passenger cabin, wherein the front, rear, left and right indicate the 
+ordinary directions of driving. Air in the tyres was deliberately released 
+so as to prevent unnecessary explosions. The thermal runaway of LIB 
+packs was initiated by either heating a single LIB-cell inside the pack or 
+heating the lower boundaries of the pack, as listed in Table 2 :  
+• A 575-W heating sheet with 90 × 65 mm in dimensions was taped to 
+the surface of a mid-cell of the LIB-pack ’ s central module (i.e., 
+Module_9), as demonstrated in Fig. 5 (a). The heater was powered by 
+an electric power supply enabling one to manually control voltage 
+and current. A constant amount of electrical energy was intended to 
+be consistently supplied to the heater. Once thermal runaway was 
+triggered, the electricity was cut-off due to the electrical short-circuit 
+failure of the heating element. This setup was intended to simulate a 
+typical scenario of thermal runaway originating from abuses or de -
+fects in the LIB cell inside the pack; 
+• A 300-kW sand-box burner supplied with propane was placed un -
+derneath the LIB pack, as illustrated in Fig. 5 (b), which was planned 
+to simulate a worst-case scenario of car accidents in which a quantity 
+of fuel has spilled, spread, and ignited underneath a BEV. 
+The experiments aimed to collect physical quantities in the condition 
+of the BEV combustion. The test setup therefore focused on triggering a 
+Fig. 3. Instrumented LIB packs.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 6 =====
+Applied Energy 332 (2023) 120497
+6
+thermal runaway rather than on examining the parameters representing 
+a thermal runaway initiation or a flaming ignition, such as the activation 
+energy of thermal runaway, and the time to the onset of the phenome -
+non. All specimens were allowed to be fully burnt out during the tests. 
+3. Results and discussion 
+3.1. HRR and THR of car fires 
+Fig. 6 shows the overall HRR and THR profiles in the six tests, 
+physically measured in the open-space condition using the large-scale 
+Fig. 4. Location of sensors in the testing rig.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 7 =====
+Applied Energy 332 (2023) 120497
+7
+cone calorimetry. The solid and dashed lines denote the HRR on the 
+scale of the primary vertical axis and the THR on that of the secondary 
+vertical axis, respectively. In the figure, to facilitate the comparison 
+among the data, all the onsets of HRR growths were adjusted at zero 
+min. Overall, personal vehicle fires remained for at least 70 min until the 
+full burnt-out in the open-space environment. In the very early stage of 
+fires (approximately 1 – 2 min), the rapid increases in HRR were observed 
+in the BEV-body, BEV_2, and ICEV tests. These prompt growths were 
+caused by the activation of the ignition tools (i.e., the propane burner or 
+heptane pans, as introduced in Table 2 ), rather than any rapid com -
+bustions of the specimens. In the fire growth stage, the ignited vehicles 
+generated gradually-increasing heats and reached peak values (i.e., 
+pHRR) in approximately 11 – 17 mins. The fully developed fire stages 
+during the tests, were not maintained for a long period, except the FCEV. 
+The fires subsequently turned into the fire decay stage with gradual 
+decreases in HRR. In this stage, fluctuations in HRR were observed in the 
+BEV_2 and BEV_3 tests due to a series of thermal runaway events. The 
+HRR and THR of the LIB pack were smaller than those of the vehicles, 
+and fluctuations were also observed due to the thermal runaway 
+phenomena. 
+The HRRs and THRs of all the specimens are tabulated in Table 4 . 
+The parts of the HRRs produced from the ignition burner or fuel pans 
+were excluded in the THR calculation. The LIB pack (64 kWh) and BEV- 
+Fig. 5. Initiation of thermal runaway.  
+Fig. 6. Time-dependent profiles of HRR and THR.  
+Table 4 
+Measures of thermal hazards of vehicle fires.  
+Measures Test 1 Test 2 Test 3 Test 4 Test 
+5 
+Test 
+6 
+LIB pack 
+of BEV_1 
+Body of 
+BEV_1 
+BEV_2 BEV_3 ICEV FCEV 
+Peak heat release 
+rate, pHRR 
+(MW)  
+1.54  7.81  6.51  7.25  7.66  5.99 
+Total heat 
+released, THR 
+(GJ)  
+1.30  7.53  8.45  9.03  8.08  10.82  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 8 =====
+Applied Energy 332 (2023) 120497
+8
+body fires generated 1.54 and 7.81 MW of pHRR and 1.30 and 7.53 GJ of 
+THR, respectively. The BEV_3 with the 64-kWh pack resulted in heat 
+with 7.25 MW of pHRR and 9.03 GJ of THR, respectively. The THR of the 
+BEV_3 fire was comparable with the sum of the individual THRs of the 
+pack and body (8.83 GJ). This observation led to a summary that a larger 
+contribution of BEV fires came from the BEV-body than the LIB-pack in 
+terms of pHRR and THR. Accordingly, the combustion that occurred in 
+the passenger cabin governed the two measures in the BEV fires, despite 
+the vigorous thermal runaway generated from the LIB packs. This is 
+based on the presumption that greater amounts of combustible materials 
+exist in the body, particularly in the cabin, than in the pack. The initial 
+weights of the vehicle-body and pack were 1,206 and 449 kg, respec -
+tively. Although no information on such amounts were available, the 
+proportions of the combustible materials used in the body and pack 
+could be estimated by measuring the amounts of mass lost after full 
+combustions, which are discussed in the following sections. 
+A gap existed between the THR values for the BEV_2 and BEV_3 fires 
+due to the difference between the energy capacities of the two vehicles. 
+The THRs of the BEV fires were higher than that of the ICEV but smaller 
+than that of the FCEV. This tendency was parallel to their weights. It 
+should be note that such comparative works are acceptable with respect 
+to THR but not as regards pHRR. The pHRR represents a phenomenon of 
+burning at the limited instant at which the most volatiles are 
+simultaneously combusted. In the extent of vehicle fires, as the simul -
+taneous combustions generally depends on several aspects, such as the 
+location of ignition spot, order of flame spread, and ventilation condi -
+tion, it is challenging to find a correlation between the pHRR and 
+weight. 
+Fig. 7 shows the chronological data of pHRR and THR for the vehicle 
+fires in the existing studies [7 – 16] and present paper. The pink and 
+green dashed boxes indicate the respective data that were physically 
+measured using the OCC and that theoretically estimated using an 
+average effective heat of combustion with the measured mass loss rate 
+utilising the FCC. There is a lack of information on the rest. Most of the 
+data are associated with ICEV fires, while a few papers demonstrate the 
+parameters for BEV fires as pointed out with the numbers in the figure 
+and tabulated in the legend table, except No. 7, 11 and 12; the asterisk 
+denotes the vehicles comparable to the present specimen in terms of the 
+size and curb weight. From the data, summaries can be made, as follows: 
+(1) The present measurements remained in the pHRR and THR ranges 
+for the models with the asterisks. (2) The data for the recent BEV model 
+(No. 9 and 10) were greater than those for the earlier models (No. 1 – 6) 
+due to the comparatively large quantities in BEV mass and LIB energy 
+capacity. (3) It was challenging to generalise about the tendencies on the 
+pHRR and THR along year or mass for the extent of car fires due to the 
+differences in car-model, -size, the materials applied, and the HRR 
+measurement method. 
+3.2. The degree of fire growth 
+The degrees of the BEV fire growth were quantified adopting a 
+generic fire-growth curve (i.e., t -square fire) used in fire protection an -
+alyses. A growth of the time-dependent HRR can be characterised by the 
+time to reach 1 MW of HRR ( t
+1 
+in s), which is generally categorised into 
+four levels based on the growths of typical real fires, as listed in Table 5 . 
+The relationships among HRR (
+˙
+Q
+f
+), t
+1
+, and time ( t ) are defined as follows 
+[23] : 
+˙
+Q
+f
+= 1 , 000 ( t / t
+1
+)
+2
+= θt
+2
+(1) 
+Fig. 7. Chronological data of pHRR and THR for vehicle fires.  
+Table 5 
+Categories of t -square fires [23] .  
+Growth 
+rate 
+t
+1 
+(s) 
+θ (MW/ 
+s
+2
+) 
+Typical real fires 
+Slow 600  0.0028 Densely packed wood products 
+Medium 300  0.0111 Solid wood furniture (desks), or individual 
+furniture items with small amounts of plastic 
+Fast 150  0.0444 High stacked wood pallets, cartons on pallets, or 
+some upholstered furniture 
+Ultrafast 75  0.1778 Upholstered furniture, high stacked plastic 
+materials, or thin wood furniture (wardrobes)  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 9 =====
+Applied Energy 332 (2023) 120497
+9
+where θ denotes the parameter of growth. 
+Fig. 8 (a) and (b) show the changes in the HRR at the fire growth stage 
+in the third and fourth tests, respectively, with design fire scenarios; 
+dashed lines denote the calculated t -square curves with the typical 
+growth rates listed in Table 5 . The time – temperature profiles demon -
+strate the temperature variations of the LIB packs at the same stage (i.e., 
+TC_PTC, TC_PBR, TC_PBC, TC_M2_C and TC_M9_C, as illustrated in 
+Figs. 2 and 3 (c)). Important events are described on the top of the figures 
+Fig. 8. The quantification of BEV fire growths in Tests 3 and 4.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 10 =====
+Applied Energy 332 (2023) 120497
+10
+Fig. 9. Temperature-time profiles of BEVs in Tests 3 and 4.  
+Fig. 10. Photos of the specimen status at the important events in Test 4.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 11 =====
+Applied Energy 332 (2023) 120497
+11
+with arrows marking the temporal points at which these incidents 
+occurred during the tests. Note that as explained in the previous section 
+of procedure, two different heating methods were applied in the third 
+and fourth tests; thus, the temporal points at which the HRR started 
+rising were not identical in the two tests. 
+The growth parameters ( θ ) for the BEV_2 and BEV_3 fires were 
+estimated to be 0.0085 and 0.020 respectively by plotting best-fit curves 
+to the measurements, as expressed with crimson dashed lines in Fig. 8 (a) 
+and 8(b). The quantities indicate that these fires developed with the 
+rates reaching 1 MW of HRR approximately 343 and 224 s after their 
+ignitions, respectively. These rates can be qualified by ‘slow medium ’ 
+and ‘fast medium ’ , respectively, based on the categories in Table 5 . 
+Particularly, the BEV_3 fire exhibited a faster rate than BEV_2, as well as 
+the swiftest rise to the peak over other test vehicles as shown in Fig. 5 , 
+even though the two cars were identical BEV models, with the exception 
+of the energy capacities of the LIB packs. The difference in the growth 
+rate between the two car fires is closely related with the difference in the 
+major source spreading flames to adjacent combustible materials. The 
+jet flame discharging from the BEV_3 LIB pack heated neighbouring 
+components more vigorously than the 300-kW-burner did in the BEV_2 
+fire. 
+In the BEV_2 test, the 300-kW-burner continuously heated the bot -
+tom of the LIB pack for 11 min and 6 s, as evidenced by the blue solid line 
+in Fig. 8 (a). This heating approach resulted in a rapid increase in the 
+pack housing (TC_PTC and PBC) and early ignitions of tyres (TC_WF and 
+W R ), as shown in Fig. 8 (a) and 9(a). Although the ignited flames were 
+subsequently spread to the trunk and cabin in order, the flame spread 
+failed to trigger any thermal runaway of LIB modules until the pHRR at 
+approximately 15 min, as shown in Fig. 8 (a); the first thermal runaway 
+of modules was observed at 22 min and 22 s (TC_M2_C). On the other 
+Fig. 11. Time-temperature profiles of LIB-packs.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 12 =====
+Applied Energy 332 (2023) 120497
+12
+hand, in the case of BEV_3, a mid-cell in the central LIB module in the 
+pack (M9) was heated by an electric heating sheet until the onset of the 
+first thermal runaway at 21 min and 20 s, as shown with the red solid 
+line (TC_M9_C) in Fig. 8 (b). As this heating approach raised a local 
+temperature inside the pack-housing, other components of the car had 
+maintained the ambient temperature until the onset of thermal 
+runaway, as illustrated in Fig. 9 (b). The list on the right of the figures 
+indicates the critical events observed during tests; the moments in time 
+for these events are marked with numbered arrows in the graphs. Once 
+triggered, grey vent-gas and jet flames were sequentially emitted, as 
+shown in Fig. 10 (a) and 10(b), respectively; the photos captured at each 
+of the events are shown in Figs. A1 and A2 . These flames heated the rear 
+tyres and other components vigorously, which resulted in rapid 
+spreading to the passenger cabin in which many combustibles of the car- 
+components existed in the condition of ambient temperature. 
+From the observation on the measurements, several findings can be 
+summarised, as follows: (1) The jet flame released from the LIB pack led 
+to the rapid growth of the BEV fire. (2) Although the jet fire originating 
+from the LIB pack accelerated the ignition and combustion of other BEV 
+components, the jet flame was not the primary contributing factor to the 
+HRR and THR. Rather, the majority of the heat released at an instant (i. 
+e., pHRR) was governed by the flames created from the conventional 
+combustion of the organic-polymer components of the car. (3) The BEV 
+fire originating from the LIB pack was more rapidly developed than that 
+derived from elsewhere, as well as that in the ICEV and FCEV fires as 
+evidenced in Fig. 6 . (4) The first responders should be more cautious 
+when approaching an accident site of BEVs. This is because the damage 
+of LIBs inside the pack housing is unobservable from outside the vehicle 
+and the activation of thermal runaway is unpredictable. In addition, 
+once triggered the fire is rapidly developed. 
+Fig. 12. The time-dependent heat flux variations in BEV_3 and ICEV fires.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 13 =====
+Applied Energy 332 (2023) 120497
+13
+3.3. Observation of LIB-pack temperatures 
+Fig. 11 (a) and 11(b) show the time-dependent temperature varia -
+tions inside and outside the LIB packs of BEV_2 and BEV_3, respectively. 
+The thermocouples locations in the legend are described in Fig. 2 . In the 
+BEV_2 test, the external heat source initially raised the surface temper -
+ature of the lower alloy-housing (TC_PBF, PBC and PBR). Although heat 
+was transferred through the metal to the housing ’ s upper area (TC_PTF, 
+PTC and PTR) in conduction, it is likely that the temperature rise of the 
+upper part was mainly caused by the heat generated from the flames 
+spread to the tyres and passenger cabin. The first thermal runaway was 
+identified at the eleventh event, which was approximately 7 min after 
+the HRR peak (pHRR). Since then, a series of thermal runaways occurred 
+in the LIB modules at M2, M1, M9, and M10 in order, which resulted in 
+the rapid temperature rise of the metal-housing with a high heat 
+capacity, up to approximately 800 ℃ . In the BEV_3 test, the thermal 
+energy generated from the first thermal runaway of the nineth module 
+directly contributed to the temperature rise in the upper housing from 
+the pack inside, due to the buoyancy of hot vent-gas and flames. Thermal 
+runaway was extended at M9_C, M6_F, M6_C, M10_C, M1_C, and M2_C in 
+order. The lower area temperature of the housing was gradually 
+increased. 
+From the heat transfer viewpoint, the external heat originating from 
+the propane burner underneath the LIB pack is supposed to be distrib -
+uted to the alloy-metal housing, internal LIBs, BEV body frame, and 
+surroundings. The amount of thermal energy transferring to the LIBs 
+could be reduced, provided that a large quantity of heat is dissipated to 
+the others. The metal housing that directly faces the external flame has a 
+relatively high heat inertia. This mass absorbed a certain amount of 
+thermal energy to raise its temperature, thereby retarding the increase in 
+Fig. 13. The time – temperature profiles of fire plumes in BEV_2 and BEV_3 fires.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 14 =====
+Applied Energy 332 (2023) 120497
+14
+the internal LIB temperature. It was observed in Fig. 11 (a) that the 
+temperatures of the thermocouples positioned on the exposed bottom- 
+surface of the housing (i.e., TC_PBF, PBC, and PBR) increased rapidly 
+in the direct heating condition, while the temperature increases of the 
+LIB modules (i.e., TC_M_1, 2, 9 and 10) were relatively slow. It is well 
+known that the alloy-metal material allows heat to rapidly transfer to 
+the internal components due to its high thermal conductivity. It was 
+additionally realised that this massive solid partially contributed to the 
+thermal protection of the internal LIBs against external heating for a 
+limited period of time by absorbing heat. On the other way, it could be 
+challenging to lose heat from the alloy cover and to prevent the tem -
+perature increases of internal LIBs once this mass reaches a threshold 
+temperature. 
+3.4. Thermal hazard to adjacent objects 
+Fig. 12 (a) and 12(b) show the time-dependent variation in total 
+exposure heat fluxes arriving at the predetermined four points sur -
+rounding and distanced from the burning cars in the fourth and fifth 
+tests. Both the car fires recorded their peaks at the points mostly within a 
+range of 40 to 60 kW/m
+2 
+in the fully developed fire stage. Although one 
+of the values exceptionally reached up to 110 kW/m
+2 
+at the BEV front, 
+more tests should be repeated to justify this phenomenon. In further 
+studies, the exposure heat fluxes measured at the points using heat flux 
+gauges ( ˙q
+′′
+g
+) could be used to evaluate the possibility of an adjacent car 
+ignition by predicting the car ’ s surface-temperature ( T
+s
+). The incident 
+heat flux on the measuring area of the gauge (
+˙
+Q
+g
+) is equal to the heat 
+released from the fire source (
+˙
+Q
+f
+) multiplied by the absorptivity of the 
+probe ’ s surface ( α
+g
+) and the configuration factor from the fire to the 
+gauge ( F
+f   g
+), as follows: 
+˙
+Q
+g
+= α
+g
+F
+f   g
+˙
+Q
+f
+(2) 
+The dash in the subscript of F implies “ to ” . The thermal energy, 
+˙
+Q
+f
+, 
+has a relationship with the measured heat flux, ˙q
+′′
+g
+, as follow: 
+˙
+Q
+f
+=
+A
+f
+α
+g
+F
+g   f
+˙q
+′′
+g
+(3) 
+where F
+f   g
+= A
+g
+/ A
+f
+F
+g   f
+. Accordingly, the time-dependent surface- 
+temperature development, T
+s
+( t ) , can be obtained using the global con -
+servation equation for energy, as follows: 
+ρ
+s
+c
+p , s
+V
+s
+dT
+s
+dt
+= A
+s
+[
+α
+s
+α
+g
+˙q
+′′
+g
+  ε
+s
+σ
+ 
+T
+4
+s
+  T
+4
+∞
+)
++ h
+s
+ 
+T
+f
+  T
+s
+)
+]
+(4) 
+Fig. 13 (a) and 13(b) show the time – temperature profiles of buoyant 
+fire plumes measured at a 2,270-mm height and generated from BEV_2 
+and BEV_3, respectively. The two fires resulted in peak temperatures 
+beyond 900 ℃ which were mainly contained contributions from the fire 
+plumes above the bonnet and front window of the cars (TC_GB and GW). 
+The peak moments of the HRRs were similar to those of the temperatures 
+in the tests. The black dashed line in the figures indicates a nominal 
+temperature – time curve based on the early tests in the 1900 s, which has 
+been most widely used in building fire engineering [24] . The BEV fires 
+are likely to endanger the durability of the structural members above the 
+cars for at least 10 min, in which the gas temperatures exceeded that of 
+the standard fire curve. In the BEV_3 case, its combustion is expected to 
+be more hazardous to the structural members than that of BEV_2, due to 
+its rapid growth and intensive heat released. 
+The concept of average effective heat of combustion ( Δ H
+c , ef f 
+in MJ/ 
+kg) that represents the gross combustion efficiency of a substance was 
+adopted to evaluate the present BEV fire hazards. This approach could 
+generate date for further studies on the safety measures. The parameter 
+for the fire generated from the BEV combustion was defined to be a 
+constant from the engineering application viewpoint, as follows: 
+Δ H
+c , ef f
+=
+∫
+t
+end
+t ini
+˙
+Q
+f
+( t )
+˙m
+loss
+( t )
+=
+THR
+m
+ini
+  m
+end
+(5) 
+Table 6 shows the calorific values, Δ H
+c , ef f
+, and the relevant mass 
+measurements of the previous and present specimens; the prior samples 
+were introduced with asterisks in Fig. 7 . As a result, mass in the range of 
+17.6 to 26 % of the total weight was generally burnt during car fires. 
+Approximately 30 MJ/kg of Δ H
+c , ef f 
+was recorded from the present BEV 
+fires, which was greater than the values for the ICEV and FCEV fires, as 
+well as for the individual combustion of the BEV-body. This was because 
+the total heat generated from the LIB pack (1.3 GJ) was relatively large 
+as compared to the amount of mass consumed (28 kg). The overall heat 
+intensity released per unit mass therefore increased in the BEV fires. For 
+the individual LIB pack, Δ H
+c , ef f 
+was estimated to be 45.9 MJ/kg, which 
+was comparable with those of flammable fuels and highly combustible 
+polymers, such as n -Pentane (45.69 MJ/kg [25] ) and polypropylene 
+(42.66 MJ/kg [26] ). This finding is related to the fact that major flam -
+mable components of a LIB cell are typically polypropylene and poly -
+ethylene (44.60 MJ/kg [26] ) for separators and mixed carbonate 
+solvents (12.7 – 24.7 MJ/kg [27] ) for electrolytes. Additionally, it turned 
+out that the Δ H
+c , ef f 
+calculation was highly dependent on the applied test 
+methods for measuring the HRR and relevant test environments, which 
+made the generalisation of a correlation between mass and Δ H
+c , ef f 
+challenging. 
+4. Conclusions 
+To quantitatively evaluate the hazards caused by battery electric 
+vehicle (BEV) fires, a series of real-scale fire tests were conducted on the 
+BEVs and the separated parts of lithium-ion battery (LIB) pack and BEV- 
+body. Other types of cars, such as internal combustion engine vehicle 
+(ICEV) and hydrogen fuel cell electric vehicle (FCEV) were additionally 
+tested for comparative purposes. 
+Although several full-scale car-fire tests have been performed in 
+prior studies, limited studies focused on BEVs. Existing literature is for 
+early BEV models. In markets, personal hybrid vehicles have been 
+shifting to be larger and more luxurious, and have larger energy capacity 
+of LIBs in case of BEVs. To cope with this trend, an innovative test 
+scheme was designed on the instrumented test rig under the 10-MW 
+calorimeter system. Thermocouples were additionally installed inside 
+Table 6 
+Gross combustion efficiency of vehicles.  
+Specimen, year m
+ini
+[kg] m
+end
+[kg] Δ m / m
+ini
+[%] Δ H
+c , ef f
+[MJ/ 
+kg] 
+ICEV(Peugeot 406), 2002  
+[9] 
+1,454 1,192  18.0 26.0 
+ICEV(Peugeot 406), 2002  
+[9] 
+1,362 1,107  18.7 27.5 
+ICEV( C 2), 2013 [13] 1,303 1,029  21.0 24.4 
+BEV(SOC100), 2014 [16] 1,448 1,115  23.0 N.A 
+BEV(SOC85), 2014 [16] 1,475 1,180  20.0 16.6 
+ICEV, 2014 [16] 1,344 1,008  25.0 14.7 
+BEV(SOC100), 2014 [16] 1,650 1,287  22.0 12.8 
+PHEV(SOC85), 2014 [16] 1,467 1,159  21.0 15.0 
+PHEV(SOC100), 2014  
+[16] 
+1,712 1,267  26.0 13.1 
+LIB pack, 2020 – 2021 
+[Present] 
+449 421  6.3 45.9 
+BEV body, 2020 – 2021 
+[Present] 
+1,206 944  21.7 28.8 
+BEV_2, 2020 – 2021 
+[Present] 
+1,540 1,256  18.4 29.8 
+BEV_3, 2020 – 2021 
+[Present] 
+1,685 1,389  17.6 30.5 
+ICEV, 2020 – 2021 
+[Present] 
+1,320 1,026  22.3 27.4 
+FCEV, 2020 – 2021 
+[Present] 
+1,820 1,423  21.8 27.3  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 15 =====
+Applied Energy 332 (2023) 120497
+15
+the LIB packs to observe the heat progress among internal LIB modules. 
+To initiate the thermal runaway of LIBs, internal and external heating 
+methods were employed by using the heating sheet and 300-kW-pro -
+pane-burner, respectively. These setups represent a typical scenario of 
+thermal runaway accidents and a worst-case scenario of fuel-spilled car 
+accidents, respectively. 
+All the specimens were burnt out completely under the calorimetry 
+hood without any enclosure structure additionally installed (i.e., open- 
+space environment). Under the condition, the BEV fires continued up 
+until 70 min. Their peak heat release rates (pHRR) were measured to be 
+in the range of 6.51 to 7.25 MW, which were slightly lower than ICEV ’ s 
+(7.66 MW) but higher than FCEV ’ s (5.99 MW). The total heats released 
+(THR) from the BEV fires were measured to be in a range of 8.45 to 9.03 
+GJ, which were also located in between than smaller ICEVs ’ (8.08 GJ) 
+and greater FCEV ’ s (10.82 GJ). 
+In the BEV fires, the major contribution to the quantity of heat 
+release rate was determined by the combustion of the conventional 
+materials of the BEV body (pHRR: 7.81 MW, THR: 7.53 GJ), rather than 
+by that in the LIB pack (pHRR: 1.54 MW, THR: 1.30 GJ). However, as a 
+jet fire intensively discharged from the LIB pack, it accelerated flame 
+spreading to adjacent combustible components, thereby leading to a 
+rapid growth of whole car-fire. The growth parameter for this BEV fire 
+was estimated to be 0.020 (fast medium) which was greater than that for 
+another BEV fire unassociated with jet flames (0.0085, slow medium). 
+The findings discussed in this study could contribute mainly to the 
+activities of first responders to BEV fire accidents and secondarily to 
+revisiting the safety of existing or new designs of car-parking related 
+structures. For the first responders, BEV fires originating from thermal 
+runaway of LIB packs would be more hazardous than those derived from 
+elsewhere, due to late human awareness of flames and their rapid 
+development once ignited. For the reconsideration of safety, approxi -
+mately 30 MJ/kg of the average effective heat of combustion can be used 
+to quantify BEV fires. In the context of this, a LIB pack has a high 
+property (approximately 45.9 MJ/kg) which is comparable to that of 
+combustible fuels (e.g., n -Pentane with 45.69 MJ/kg). 
+Funding 
+The author(s) disclosed receipt of the following financial support for 
+the research, authorship, and/or publication of this article: This project 
+is funded by NFA(National Fire Agency) and KEIT(Korea Evaluation 
+Institute of Industrial Technology) through R & D programme on Devel -
+opment of Fire Safety Technologies for Emergency Response to Fire 
+Hazards (No. 20008021). 
+Fig. A1. Photos of the specimen status at the critical events in Test 3.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 16 =====
+Applied Energy 332 (2023) 120497
+16
+CRediT authorship contribution statement 
+Sungwook Kang: Methodology, Investigation, Data curation, Visu -
+alization, Software, Writing – original draft. Minjae Kwon: Data cura -
+tion, Formal analysis, Project administration. Joung Yoon Choi: 
+Funding acquisition, Formal analysis, Resources, Project administration, 
+Supervision. Sengkwan Choi: Funding acquisition, Conceptualization, 
+Methodology, Validation, Writing – review & editing. 
+Declaration of Competing Interest 
+The authors declare that they have no known competing financial 
+interests or personal relationships that could have appeared to influence 
+the work reported in this paper. 
+Data availability 
+Data will be made available on request. 
+Appendix 
+See the Figs. A1 and A2 . 
+References 
+[1] R. Matulka, The history of the electric car. In: Department of Energy, https://www. 
+energy.gov/articles/history-electric-car, Assessed on 23 Mar 2022. 
+[2] R. Irle, Global EV sales for 2021. In: EV Volumes.com, https://www.ev-volumes. 
+com/country/total-world-plug-in-vehicle-volumes/, Assessed on 23 Mar 2022. 
+[3] J. Edmondson, A. Holland, R. Collins, L. Gear, Electric car sales, models & 
+technologies database, IDTechEx, https://www.idtechex.com/en/research-report/ 
+electric-car-sales-models-and-technologies-database/824, Assessed on 23 Mar 
+2022. 
+[4] B. Johnson, Sony flamed for battery bungle, https://www.theguardian.com/ 
+technology/2006/aug/31/sony.guardianweeklytechnologysection, Assessed on 11 
+Nov 2022. 
+[5] S. Gibbs, Samsung suspends sales of Galaxy Note 7 after smartphones catch fire, 
+https://www.theguardian.com/technology/2016/sep/02/samsung-recall-galaxy- 
+note-7-reports-of-smartphones-catching-fire, Assessed on 11 Nov 2022. 
+[6] Y.H. Kim, How to resolve electric vehicle fires, National Fire Research Institute of 
+Korea, In: Fire Protection News, https://www.fpn119.co.kr/171590, Assessed on 
+23 Mar 2022. 
+[7] Mangs J, Keski-Rahkonen O. Characterization of the fire behaviour of a burning 
+passenger car. Part I: Car fire experiments, Fire Safety Journal 1994;23:17 – 35 . 
+[8] Shipp M, Spearpoint M. Measurements of the severity of fires involving private 
+motor vehicles. Fire Mater 1995;19:143 – 51 . 
+[9] D. Joyeux, J. Kruppa, L.-G. Cajot, J.-B. Schleich, P. van de Leur, L. Twilt, 
+Demonstration of real fire tests in car parks and high buildings, European 
+Commission, Technical Steel Research, Final Report, EUR-29466 EN, 2002. 
+[10] Y. Shintani, N. Kakae, K. Harada, H. Masuda, W. Takahashi, Experimental 
+investigation of burning behavior of automobiles, 6
+th 
+Asia-Oceania Symposium on 
+Fire Science and Technology, Daegu, Korea, 17-20 March 2004. 
+Fig. A2. Photos of the specimen status at the critical events in Test 4.  
+S. Kang et al.                                                                                                                                                                                                                                    
+
+===== PAGE 17 =====
+Applied Energy 332 (2023) 120497
+17
+[11] Okamoto K, Watanabe N, Hagimoto Y, Chigira T, Masano R, Miura H, et al. Burning 
+behavior of sedan passenger cars. Fire Saf J 2009;44:301–10. 
+[12] N. Watanabe, O. Sugawa, T. Suwa, Y. Ogawa, M. Hiramatsu, H. Tomonori, H. 
+Miyanoto, K. Okamoto, M. Honma, Comparison of fire behaviors of an electric- 
+battery-powered vehicle and gasoline-powered vehicle in a real-scale fire test, 2
+nd 
+International Conference on Fires in Vehicles - FIVE 2012, pp.195-205, Chicago, 
+USA, September 27-28, 2012. 
+[13] Tohir MZM, Spearpoint M. Distribution analysis of the fire severity characteristics 
+of single passenger road vehicles using heat release rate data. Fire Sci Rev 2013;2: 
+5–30. 
+[14] A. Lecocq, M. Bertana, B. Truchot, G. Marlair, Comparison of the fire consequences 
+of an electric vehicle and an internal combustion engine vehicle, 2
+nd 
+International 
+Conference on Fires in Vehicles - FIVE 2012, pp.183-194, Chicago, USA, September 
+27-28, 2014. 
+[15] Spearpoint M, Tohir MZM, Abu AK, Xie P. Fire load energy densities for risk-based 
+design of car parking buildings. Case Studies in Fire Safety 2015;3:44–50. 
+[16] C. Lam, D. MacNeil, R. Kroeker, G. Lougheed, G. Lalime, Full-scale fire testing of 
+electric and internal combustion engine vehicles, 4
+th 
+International Conference on 
+Fire in Vehicles, Baltimore, USA, October 5-6, 2016. 
+[17] Dahlberg M. The SP industry calorimeter for rate of heat release measurements up 
+to 10 MW. SP Report 1992;1992:43. 
+[18] R.A. Bryant, M.F. Bundy, The NIST 20 MW calorimetry measurement system for 
+large-fire research, NIST Technical Note 2077, 2019. 
+[19] Sun P, Huang X, Bisschop R, Niu H. A review of battery fires in electric vehicles. 
+Fire Technol 2020;56:1361–410. 
+[20] C. Huggett, Estimation of rate of heat release by means of oxygen-consumption 
+measurements, Fire and Materials 4(2):61-65. 
+[21] ISO 24473:2008, Fire tests – Open calorimetry – Measurement of the rate of 
+production of heat and combustion products for fires of up to 40 MW, International 
+Organization for Standardization, 2008. 
+[22] Bryant RA, Bundy MF. The NIST 20 MW calorimetry measurement system for 
+large-fire research, NIST Technical Note 2077. National Institute of Standards and 
+Technology 2019. https://doi.org/10.6028/NIST.TN.2077. 
+[23] Hadjisophocleous GV, Mehaffey JR. Fire Scenarios. Chap. 38, SFPE Handbook of 
+Fire Protection Engineering. fifth ed.,. New York: Springer; 2016. 
+[24] Wang Y, Burgess I, Wald F, Gille M. “Introduction to enclosure fire dynamics” Chap 
+3. Performance-Based Fire Engineering of Structures: CRC Press Taylor & Francis 
+Group NW; 2013. 
+[25] Drysdale D. “Fire Science and Combustion” Chap 1, An Introduction to Fire 
+Dynamics third edi. John Wiley & Sons West Sussex UK; 2021. 
+[26] Walters RN, Hackett SM, Lyon RE. Heats of combustion of high temperature 
+polymers. Fire Mater 2000;24(5):245–52. 
+[27] Mei J, Liu H, Chen M. Experimental study on combustion behaviour of mixed 
+carbonate solvents and separator used in lithium-ion batteries. J Therm Anal 
+Calorim 2020;139:1255–64. 
+S. Kang et al.                                                                                                                                                                                                                                    

@@ -1,0 +1,335 @@
+&HEAD CHID='KANG_T4_quick', TITLE='Kang et al. Test 4 - smoke test' /
+! 생성: input/build_kang_validation.ipynb (수동 편집 금지)
+! 검증 대상: Kang et al., Applied Energy 332 (2023) 120497, Test 4 (BEV_3, 64 kWh)
+! 좌표계: x=폭, y=길이(후->전), z=플랫폼 상면 기준.
+!         차량 중심이 원점 (0,0). 논문 좌표에서 (-1.550, -2.600) m 평행이동.
+
+! ========================================================================
+!  메쉬 · 시간 · 출력
+! ========================================================================
+&MESH ID='M01', IJK=29,39,48, XB=-4.0000,-0.3750, -5.0000,-0.1250, 0.0000,6.0000 /
+&MESH ID='M02', IJK=29,41,48, XB=-4.0000,-0.3750, -0.1250,5.0000, 0.0000,6.0000 /
+&MESH ID='M03', IJK=35,39,48, XB=-0.3750,4.0000, -5.0000,-0.1250, 0.0000,6.0000 /
+&MESH ID='M04', IJK=35,41,48, XB=-0.3750,4.0000, -0.1250,5.0000, 0.0000,6.0000 /
+! 메쉬 경계면: x=[-0.375], y=[-0.125], z=[]
+&TIME T_END=300.0 /
+&MISC TMPA=20.0 /
+&DUMP DT_HRR=1.0, DT_DEVC=1.0, DT_SLCF=5.0, DT_BNDF=20.0, MASS_FILE=T /   ! MASS_FILE = 논문 로드셀 대응
+
+! ========================================================================
+!  화학종
+! ========================================================================
+&SPEC ID='HYDROGEN'          LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='CARBON MONOXIDE'   LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='CARBON DIOXIDE'    LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='METHANE'           LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='ETHYLENE'          LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='BATTERY_GAS',
+      SPEC_ID(1)='HYDROGEN', VOLUME_FRACTION(1)=28.000,
+      SPEC_ID(2)='CARBON MONOXIDE', VOLUME_FRACTION(2)=23.000,
+      SPEC_ID(3)='CARBON DIOXIDE', VOLUME_FRACTION(3)=28.000,
+      SPEC_ID(4)='METHANE', VOLUME_FRACTION(4)=12.000,
+      SPEC_ID(5)='ETHYLENE', VOLUME_FRACTION(5)=9.000 /
+&SPEC ID='CAR_BODY_FUEL', FORMULA='C6H10O1' /
+&SPEC ID='HYDROGEN FLUORIDE' /   ! 비반응 추적
+
+! ========================================================================
+!  반응
+! ========================================================================
+&REAC ID='BATT', FUEL='BATTERY_GAS', HEAT_OF_COMBUSTION=14644.3,
+      SOOT_YIELD=0.02, CO_YIELD=0.05, RADIATIVE_FRACTION=0.15 /
+&REAC ID='BODY', FUEL='CAR_BODY_FUEL', HEAT_OF_COMBUSTION=28800.0,   ! Table 6 실측
+      SOOT_YIELD=0.1, CO_YIELD=0.05, RADIATIVE_FRACTION=0.35 /
+
+! ========================================================================
+!  부품별 재료 - 프레임 / 타이어 / 유리 를 독립 파라미터로 둔다
+! ========================================================================
+! 프레임과 타이어는 열적 물성만 다르고 연료 화학종은 CAR_BODY_FUEL 로
+! 공유한다 (REAC 를 늘리지 않기 위해서). THICKNESS 는 각자 질량에서 역산.
+&MATL ID='FRAME_MATL'
+      SPEC_ID='CAR_BODY_FUEL'
+      NU_SPEC=1.0
+      BOILING_TEMPERATURE=380.0
+      HEAT_OF_REACTION=1800.0
+      DENSITY=900.0
+      CONDUCTIVITY=0.2
+      SPECIFIC_HEAT=1.5
+      ABSORPTION_COEFFICIENT=1000.0
+      EMISSIVITY=0.9 /
+&MATL ID='TIRE_MATL'
+      SPEC_ID='CAR_BODY_FUEL'
+      NU_SPEC=1.0
+      BOILING_TEMPERATURE=420.0
+      HEAT_OF_REACTION=2200.0
+      DENSITY=1100.0
+      CONDUCTIVITY=0.25
+      SPECIFIC_HEAT=1.8
+      ABSORPTION_COEFFICIENT=1000.0
+      EMISSIVITY=0.95 /
+! 유리는 비연소. 형상에서 빼지 않고 이 SURF 로 채워 두었으므로,
+! 물성을 바꾸면 캐빈 열적 거동만 독립으로 손볼 수 있다.
+&MATL ID='GLASS_MATL'
+      DENSITY=2500.0
+      CONDUCTIVITY=1.05
+      SPECIFIC_HEAT=0.84
+      EMISSIVITY=0.9 /
+&SURF ID='CAR_BODY',  MATL_ID='FRAME_MATL', THICKNESS=0.00638, COLOR='SILVER' /
+&SURF ID='TIRE',      MATL_ID='TIRE_MATL',  THICKNESS=0.00882, COLOR='BLACK' /
+&SURF ID='CAR_GLASS', MATL_ID='GLASS_MATL', THICKNESS=0.00600, COLOR='SKY BLUE' /
+&SURF ID='GROUND', COLOR='GRAY 40' /
+! Schmidt-Boelter 게이지는 수냉식이라 표면이 상온에 가깝게 유지된다.
+&SURF ID='HF_GAUGE', TMP_FRONT=20.0, COLOR='BLUE' /
+
+! ========================================================================
+!  경로 1 - 팩 케이싱 고체 경계조건
+! ========================================================================
+&SURF ID='PACK_CASE', COLOR='GRAY 30', NET_HEAT_FLUX=5.0000, RAMP_Q='cas_q' /
+&RAMP ID='cas_q', T=     0.000, F=0.00000 /
+&RAMP ID='cas_q', T=   300.000, F=0.30000 /
+&RAMP ID='cas_q', T=   600.000, F=0.80000 /
+&RAMP ID='cas_q', T=   900.000, F=1.00000 /
+
+! ========================================================================
+!  경로 2 - 팩 발열률. ref_data 실측곡선을 팩 6면에 면적비례로
+! ========================================================================
+! 소스: ref_data/pack_HRR.csv  (t[min], HRR[MW]) 를 선형보간
+! 6면 합 면적 A = 4.4375 m2 (XMIN, XMAX, YMIN, YMAX, ZMIN, ZMAX)
+! pHRR 1.520 MW @ 18.5 min,  THR 1.318 GJ,  HRRPUA = pHRR/A = 342.43 kW/m2
+! 6면 합 = HRRPUA x A x RAMP_Q(t) = 곡선값. 면적비례는 자동으로 성립한다.
+&SURF ID='VENT_PACK', COLOR='ORANGE',
+      HRRPUA=342.4266, RAMP_Q='hrr_pack',
+      SPEC_ID(1)='BATTERY_GAS', MASS_FRACTION(1)=0.995000,
+      SPEC_ID(2)='HYDROGEN FLUORIDE', MASS_FRACTION(2)=0.005000,
+      TMP_FRONT=660.0 /
+&RAMP ID='hrr_pack', T=     0.000, F=0.04004 /
+&RAMP ID='hrr_pack', T=    84.112, F=0.10006 /
+&RAMP ID='hrr_pack', T=   145.794, F=0.09992 /
+&RAMP ID='hrr_pack', T=   207.477, F=0.11982 /
+&RAMP ID='hrr_pack', T=   263.551, F=0.11969 /
+&RAMP ID='hrr_pack', T=   325.234, F=0.16967 /
+&RAMP ID='hrr_pack', T=   370.093, F=0.09938 /
+&RAMP ID='hrr_pack', T=   426.168, F=0.07919 /
+&RAMP ID='hrr_pack', T=   543.925, F=0.10899 /
+&RAMP ID='hrr_pack', T=   571.963, F=0.13901 /
+&RAMP ID='hrr_pack', T=   588.785, F=0.19912 /
+&RAMP ID='hrr_pack', T=   616.822, F=0.26924 /
+&RAMP ID='hrr_pack', T=   661.682, F=0.20898 /
+&RAMP ID='hrr_pack', T=   700.935, F=0.17880 /
+&RAMP ID='hrr_pack', T=   717.757, F=0.29908 /
+&RAMP ID='hrr_pack', T=   723.364, F=0.47955 /
+&RAMP ID='hrr_pack', T=   728.972, F=0.62993 /
+&RAMP ID='hrr_pack', T=   729.572, F=0.83046 /
+&RAMP ID='hrr_pack', T=   745.794, F=0.62989 /
+&RAMP ID='hrr_pack', T=   751.402, F=0.68001 /
+&RAMP ID='hrr_pack', T=   790.654, F=0.57965 /
+&RAMP ID='hrr_pack', T=   841.121, F=0.49932 /
+&RAMP ID='hrr_pack', T=   885.981, F=0.53932 /
+&RAMP ID='hrr_pack', T=   908.411, F=0.58940 /
+&RAMP ID='hrr_pack', T=   925.234, F=0.54925 /
+&RAMP ID='hrr_pack', T=   947.664, F=0.66951 /
+&RAMP ID='hrr_pack', T=   981.308, F=0.62933 /
+&RAMP ID='hrr_pack', T=   981.309, F=0.69951 /
+&RAMP ID='hrr_pack', T=  1014.953, F=0.68941 /
+&RAMP ID='hrr_pack', T=  1020.561, F=0.83979 /
+&RAMP ID='hrr_pack', T=  1037.383, F=0.99015 /
+&RAMP ID='hrr_pack', T=  1048.598, F=0.90991 /
+&RAMP ID='hrr_pack', T=  1087.850, F=0.85968 /
+&RAMP ID='hrr_pack', T=  1110.280, F=1.00000 /
+&RAMP ID='hrr_pack', T=  1127.103, F=0.86962 /
+&RAMP ID='hrr_pack', T=  1132.710, F=0.70918 /
+&RAMP ID='hrr_pack', T=  1149.533, F=0.50861 /
+&RAMP ID='hrr_pack', T=  1188.785, F=0.62883 /
+&RAMP ID='hrr_pack', T=  1228.037, F=0.69892 /
+&RAMP ID='hrr_pack', T=  1267.290, F=0.52838 /
+&RAMP ID='hrr_pack', T=  1306.542, F=0.61852 /
+&RAMP ID='hrr_pack', T=  1334.579, F=0.42795 /
+&RAMP ID='hrr_pack', T=  1340.187, F=0.62847 /
+&RAMP ID='hrr_pack', T=  1362.617, F=0.82895 /
+&RAMP ID='hrr_pack', T=  1385.047, F=0.72863 /
+&RAMP ID='hrr_pack', T=  1396.262, F=0.52807 /
+&RAMP ID='hrr_pack', T=  1407.477, F=0.38767 /
+&RAMP ID='hrr_pack', T=  1418.692, F=0.22722 /
+&RAMP ID='hrr_pack', T=  1429.907, F=0.09685 /
+&RAMP ID='hrr_pack', T=  1446.729, F=0.18705 /
+&RAMP ID='hrr_pack', T=  1485.981, F=0.13682 /
+&RAMP ID='hrr_pack', T=  1530.841, F=0.22696 /
+&RAMP ID='hrr_pack', T=  1553.271, F=0.09656 /
+&RAMP ID='hrr_pack', T=  1575.701, F=0.02632 /
+&RAMP ID='hrr_pack', T=  1586.916, F=0.21679 /
+&RAMP ID='hrr_pack', T=  1586.976, F=0.36719 /
+&RAMP ID='hrr_pack', T=  1598.131, F=0.60780 /
+&RAMP ID='hrr_pack', T=  1620.561, F=0.45735 /
+&RAMP ID='hrr_pack', T=  1631.776, F=0.30693 /
+&RAMP ID='hrr_pack', T=  1642.991, F=0.13645 /
+&RAMP ID='hrr_pack', T=  1676.636, F=0.07621 /
+&RAMP ID='hrr_pack', T=  1743.925, F=0.15626 /
+&RAMP ID='hrr_pack', T=  1794.393, F=0.11603 /
+&RAMP ID='hrr_pack', T=  1833.645, F=0.14602 /
+&RAMP ID='hrr_pack', T=  1917.757, F=0.09569 /
+&RAMP ID='hrr_pack', T=  1968.224, F=0.14570 /
+&RAMP ID='hrr_pack', T=  2035.514, F=0.08538 /
+&RAMP ID='hrr_pack', T=  2097.196, F=0.09526 /
+&RAMP ID='hrr_pack', T=  2164.486, F=0.11515 /
+&RAMP ID='hrr_pack', T=  2209.346, F=0.11504 /
+&RAMP ID='hrr_pack', T=  2220.561, F=0.04483 /
+&RAMP ID='hrr_pack', T=  2276.636, F=0.02464 /
+&RAMP ID='hrr_pack', T=  2282.243, F=0.19508 /
+&RAMP ID='hrr_pack', T=  2287.850, F=0.40563 /
+&RAMP ID='hrr_pack', T=  2329.907, F=0.26515 /
+&RAMP ID='hrr_pack', T=  2371.963, F=0.09460 /
+&RAMP ID='hrr_pack', T=  2377.570, F=0.30515 /
+&RAMP ID='hrr_pack', T=  2394.393, F=0.48558 /
+&RAMP ID='hrr_pack', T=  2422.430, F=0.36520 /
+&RAMP ID='hrr_pack', T=  2428.037, F=0.25489 /
+&RAMP ID='hrr_pack', T=  2456.075, F=0.33504 /
+&RAMP ID='hrr_pack', T=  2517.757, F=0.25468 /
+&RAMP ID='hrr_pack', T=  2523.364, F=0.83620 /
+&RAMP ID='hrr_pack', T=  2568.224, F=0.57541 /
+&RAMP ID='hrr_pack', T=  2596.262, F=0.31465 /
+&RAMP ID='hrr_pack', T=  2629.907, F=0.47499 /
+&RAMP ID='hrr_pack', T=  2652.336, F=0.61531 /
+&RAMP ID='hrr_pack', T=  2674.766, F=0.37462 /
+&RAMP ID='hrr_pack', T=  2697.196, F=0.10385 /
+&RAMP ID='hrr_pack', T=  2764.486, F=0.17388 /
+&RAMP ID='hrr_pack', T=  2781.308, F=0.43453 /
+&RAMP ID='hrr_pack', T=  2798.131, F=0.25401 /
+&RAMP ID='hrr_pack', T=  2826.168, F=0.03336 /
+&RAMP ID='hrr_pack', T=  2899.065, F=0.03319 /
+&RAMP ID='hrr_pack', T=  3078.505, F=0.00268 /
+&RAMP ID='hrr_pack', T=  3353.271, F=0.00202 /
+&RAMP ID='hrr_pack', T=  3454.206, F=0.02183 /
+&RAMP ID='hrr_pack', T=  3566.355, F=0.00000 /
+&RAMP ID='hrr_pack', T=  3628.037, F=0.02142 /
+&RAMP ID='hrr_pack', T=  3740.187, F=0.00110 /
+&RAMP ID='hrr_pack', T=  3880.374, F=0.02082 /
+&RAMP ID='hrr_pack', T=  4082.243, F=0.02033 /
+&RAMP ID='hrr_pack', T=  4183.178, F=0.00004 /
+
+! ========================================================================
+!  지오메트리 - 타이어 -> 하부 차체(속 빈 쉘) -> 캐빈(프레임+유리)
+! ========================================================================
+&OBST ID='TIRE_RL', XB=-0.8750,-0.6250,-1.6250,-1.0000,0.0000,0.6250, SURF_ID='TIRE', COLOR='BLACK' /
+&OBST ID='TIRE_RR', XB=0.6250,0.8750,-1.6250,-1.0000,0.0000,0.6250, SURF_ID='TIRE', COLOR='BLACK' /
+&OBST ID='TIRE_FL', XB=-0.8750,-0.6250,1.0000,1.6250,0.0000,0.6250, SURF_ID='TIRE', COLOR='BLACK' /
+&OBST ID='TIRE_FR', XB=0.6250,0.8750,1.0000,1.6250,0.0000,0.6250, SURF_ID='TIRE', COLOR='BLACK' /
+&OBST ID='FLOOR_1', XB=-0.8750,0.8750,-2.1250,-1.6250,0.5000,0.6250, SURF_ID='CAR_BODY', COLOR='GRAY 60' /
+&OBST ID='SIDE_L_1', XB=-0.8750,-0.7500,-2.1250,-1.6250,0.5000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='SIDE_R_1', XB=0.7500,0.8750,-2.1250,-1.6250,0.5000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='FLOOR_2', XB=-0.8750,0.8750,-1.0000,1.0000,0.5000,0.6250, SURF_ID='CAR_BODY', COLOR='GRAY 60' /
+&OBST ID='SIDE_L_2', XB=-0.8750,-0.7500,-1.0000,1.0000,0.5000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='SIDE_R_2', XB=0.7500,0.8750,-1.0000,1.0000,0.5000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='FLOOR_3', XB=-0.8750,0.8750,1.6250,2.1250,0.5000,0.6250, SURF_ID='CAR_BODY', COLOR='GRAY 60' /
+&OBST ID='SIDE_L_3', XB=-0.8750,-0.7500,1.6250,2.1250,0.5000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='SIDE_R_3', XB=0.7500,0.8750,1.6250,2.1250,0.5000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='FLOOR_ARCH_1', XB=-0.6250,0.6250,-1.6250,-1.0000,0.5000,0.6250, SURF_ID='CAR_BODY', COLOR='GRAY 60' /
+&OBST ID='SIDE_L_ARCH_1', XB=-0.8750,-0.7500,-1.6250,-1.0000,0.6250,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='SIDE_R_ARCH_1', XB=0.7500,0.8750,-1.6250,-1.0000,0.6250,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='FLOOR_ARCH_2', XB=-0.6250,0.6250,1.0000,1.6250,0.5000,0.6250, SURF_ID='CAR_BODY', COLOR='GRAY 60' /
+&OBST ID='SIDE_L_ARCH_2', XB=-0.8750,-0.7500,1.0000,1.6250,0.6250,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='SIDE_R_ARCH_2', XB=0.7500,0.8750,1.0000,1.6250,0.6250,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='END_REAR', XB=-0.8750,0.8750,-2.1250,-2.0000,0.5000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='END_FRONT', XB=-0.8750,0.8750,2.0000,2.1250,0.5000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='HOOD', XB=-0.8750,0.8750,0.8750,2.1250,0.8750,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='TRUNK', XB=-0.8750,0.8750,-2.1250,-0.8750,0.8750,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='SILL_L', XB=-0.8750,-0.6250,-1.0000,1.0000,0.8750,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='SILL_R', XB=0.6250,0.8750,-1.0000,1.0000,0.8750,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='ROOF', XB=-0.7500,0.7500,-1.0000,1.0000,1.5000,1.6250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='RAIL_L', XB=-0.7500,-0.6250,-1.0000,1.0000,1.0000,1.1250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='RAIL_R', XB=0.6250,0.7500,-1.0000,1.0000,1.0000,1.1250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='RAIL_REAR', XB=-0.7500,0.7500,-1.0000,-0.8750,1.0000,1.1250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='RAIL_FRONT', XB=-0.7500,0.7500,0.8750,1.0000,1.0000,1.1250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='APILLAR_L', XB=-0.7500,-0.6250,0.8750,1.0000,1.0000,1.6250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='BPILLAR_L', XB=-0.7500,-0.6250,-0.1250,0.1250,1.0000,1.6250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='CPILLAR_L', XB=-0.7500,-0.6250,-1.0000,-0.8750,1.0000,1.6250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='APILLAR_R', XB=0.6250,0.7500,0.8750,1.0000,1.0000,1.6250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='BPILLAR_R', XB=0.6250,0.7500,-0.1250,0.1250,1.0000,1.6250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='CPILLAR_R', XB=0.6250,0.7500,-1.0000,-0.8750,1.0000,1.6250, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='GLASS_WINDSHIELD', XB=-0.6250,0.6250,0.8750,1.0000,1.1250,1.5000, SURF_ID='CAR_GLASS', COLOR='SKY BLUE' /
+&OBST ID='GLASS_BACKLIGHT', XB=-0.6250,0.6250,-1.0000,-0.8750,1.1250,1.5000, SURF_ID='CAR_GLASS', COLOR='SKY BLUE' /
+&OBST ID='GLASS_FL', XB=-0.7500,-0.6250,0.1250,0.8750,1.3750,1.5000, SURF_ID='CAR_GLASS', COLOR='SKY BLUE' /
+&OBST ID='GLASS_RL', XB=-0.7500,-0.6250,-0.8750,-0.1250,1.3750,1.5000, SURF_ID='CAR_GLASS', COLOR='SKY BLUE' /
+&OBST ID='GLASS_FR', XB=0.6250,0.7500,0.1250,0.8750,1.1250,1.5000, SURF_ID='CAR_GLASS', COLOR='SKY BLUE' /
+&OBST ID='GLASS_RR', XB=0.6250,0.7500,-0.8750,-0.1250,1.1250,1.5000, SURF_ID='CAR_GLASS', COLOR='SKY BLUE' /
+&OBST ID='PACK', XB=-0.6250,0.6250,-0.7500,0.7500,0.2500,0.3750, SURF_ID='PACK_CASE', COLOR='GRAY 30' /   ! 연소하지 않음
+! 하부 차체와 캐빈은 두께 0.125 m 판으로만 이루어져 내부가 비어 있다.
+! 캐빈 프레임(루프+벨트레일 링+6개 필러)은 서로 맞닿아 하나로 연결된다.
+! 좌측 앞·뒷 도어창은 하단을 내려 개구로 두었다 (논문 2.4절 half-opened).
+! 팩 6면 전체에 벤트가스 경계조건. 팩은 지면·차체 어디에도 닿지 않게
+! 띄워 두었으므로 6면이 모두 기체와 접한다.
+&VENT XB=-0.6250,-0.6250,-0.7500,0.7500,0.2500,0.3750, SURF_ID='VENT_PACK' /   ! XMIN
+&VENT XB=0.6250,0.6250,-0.7500,0.7500,0.2500,0.3750, SURF_ID='VENT_PACK' /   ! XMAX
+&VENT XB=-0.6250,0.6250,-0.7500,-0.7500,0.2500,0.3750, SURF_ID='VENT_PACK' /   ! YMIN
+&VENT XB=-0.6250,0.6250,0.7500,0.7500,0.2500,0.3750, SURF_ID='VENT_PACK' /   ! YMAX
+&VENT XB=-0.6250,0.6250,-0.7500,0.7500,0.2500,0.2500, SURF_ID='VENT_PACK' /   ! ZMIN
+&VENT XB=-0.6250,0.6250,-0.7500,0.7500,0.3750,0.3750, SURF_ID='VENT_PACK' /   ! ZMAX
+
+&VENT MB='XMIN', SURF_ID='OPEN' /
+&VENT MB='XMAX', SURF_ID='OPEN' /
+&VENT MB='YMIN', SURF_ID='OPEN' /
+&VENT MB='YMAX', SURF_ID='OPEN' /
+&VENT MB='ZMAX', SURF_ID='OPEN' /
+&VENT MB='ZMIN', SURF_ID='GROUND' /
+
+! ========================================================================
+!  센서 - 논문 Fig. 4(b)~(e) 위치 그대로
+! ========================================================================
+! 천장 수냉파이프 열전대 (z = 2.270 m)
+&DEVC ID='TC_GB', QUANTITY='THERMOCOUPLE', XYZ=0.000,1.490,2.270 /
+&DEVC ID='TC_GW', QUANTITY='THERMOCOUPLE', XYZ=0.000,0.690,2.270 /
+&DEVC ID='TC_GFW', QUANTITY='THERMOCOUPLE', XYZ=-0.660,0.130,2.270 /
+&DEVC ID='TC_GR', QUANTITY='THERMOCOUPLE', XYZ=0.000,-0.510,2.270 /
+&DEVC ID='TC_GRW', QUANTITY='THERMOCOUPLE', XYZ=-0.660,-0.670,2.270 /
+&DEVC ID='TC_GCRW', QUANTITY='THERMOCOUPLE', XYZ=0.000,-1.710,2.270 /
+! 도어창 중앙높이 열전대 (z = 1.270 m)
+&DEVC ID='TC_FW', QUANTITY='THERMOCOUPLE', XYZ=-0.660,0.130,1.270 /
+&DEVC ID='TC_RW', QUANTITY='THERMOCOUPLE', XYZ=-0.660,-0.670,1.270 /
+! Schmidt-Boelter 열유속계 4개. RADIOMETER/GAUGE HEAT FLUX 는 FDS에서
+! 고체상 quantity라 벽면이 있어야 한다 (없으면 ERROR(427)). 실제 게이지도
+! 수냉 몸체이므로 1셀 블록을 세우고 차량을 향한 면에 붙였다.
+!   <id>     = RADIOMETER      (복사만. 논문 'irradiance')
+!   <id>_tot = GAUGE HEAT FLUX (복사+대류. Schmidt-Boelter 실측 대응)
+&OBST ID='BODY_HF_F', XB=0.0000,0.1250,2.6250,2.7500,1.2500,1.3750, SURF_ID='HF_GAUGE', COLOR='BLUE' /
+&DEVC ID='HF_F', QUANTITY='RADIOMETER', XYZ=0.0000,2.5625,1.2500, IOR=-2 /
+&DEVC ID='HF_F_tot', QUANTITY='GAUGE HEAT FLUX', XYZ=0.0000,2.5625,1.2500, IOR=-2 /
+&OBST ID='BODY_HF_R', XB=0.0000,0.1250,-2.7500,-2.6250,1.2500,1.3750, SURF_ID='HF_GAUGE', COLOR='BLUE' /
+&DEVC ID='HF_R', QUANTITY='RADIOMETER', XYZ=0.0000,-2.5625,1.2500, IOR=+2 /
+&DEVC ID='HF_R_tot', QUANTITY='GAUGE HEAT FLUX', XYZ=0.0000,-2.5625,1.2500, IOR=+2 /
+&OBST ID='BODY_HF_FD', XB=-1.6250,-1.5000,0.0000,0.2500,1.2500,1.3750, SURF_ID='HF_GAUGE', COLOR='BLUE' /
+&DEVC ID='HF_FD', QUANTITY='RADIOMETER', XYZ=-1.4375,0.1250,1.2500, IOR=+1 /
+&DEVC ID='HF_FD_tot', QUANTITY='GAUGE HEAT FLUX', XYZ=-1.4375,0.1250,1.2500, IOR=+1 /
+&OBST ID='BODY_HF_RD', XB=-1.6250,-1.5000,-0.7500,-0.5000,1.2500,1.3750, SURF_ID='HF_GAUGE', COLOR='BLUE' /
+&DEVC ID='HF_RD', QUANTITY='RADIOMETER', XYZ=-1.4375,-0.6250,1.2500, IOR=+1 /
+&DEVC ID='HF_RD_tot', QUANTITY='GAUGE HEAT FLUX', XYZ=-1.4375,-0.6250,1.2500, IOR=+1 /
+
+! 반응별 HRR 분리 (논문 Test 1 팩 vs Test 2 차체 기여 대조)
+&DEVC ID='HRR_BATT', QUANTITY='HRRPUV REAC', REAC_ID='BATT', SPATIAL_STATISTIC='VOLUME INTEGRAL', XB=-4.0000,4.0000,-5.0000,5.0000,0.0000,6.0000 /
+&DEVC ID='HRR_BODY', QUANTITY='HRRPUV REAC', REAC_ID='BODY', SPATIAL_STATISTIC='VOLUME INTEGRAL', XB=-4.0000,4.0000,-5.0000,5.0000,0.0000,6.0000 /
+
+! 팩 표면 열유속 (1D 되먹임용)
+&DEVC ID='q_PACK_BOT', QUANTITY='GAUGE HEAT FLUX', XB=-0.6250,0.6250,-0.7500,0.7500,0.2500,0.2500, IOR=-3, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='T_PACK_BOT', QUANTITY='WALL TEMPERATURE', XB=-0.6250,0.6250,-0.7500,0.7500,0.2500,0.2500, IOR=-3, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='q_PACK_XMIN', QUANTITY='GAUGE HEAT FLUX', XB=-0.6250,-0.6250,-0.7500,0.7500,0.2500,0.3750, IOR=-1, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='T_PACK_XMIN', QUANTITY='WALL TEMPERATURE', XB=-0.6250,-0.6250,-0.7500,0.7500,0.2500,0.3750, IOR=-1, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='q_PACK_XMAX', QUANTITY='GAUGE HEAT FLUX', XB=0.6250,0.6250,-0.7500,0.7500,0.2500,0.3750, IOR=1, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='T_PACK_XMAX', QUANTITY='WALL TEMPERATURE', XB=0.6250,0.6250,-0.7500,0.7500,0.2500,0.3750, IOR=1, SPATIAL_STATISTIC='MEAN' /
+
+&BNDF QUANTITY='GAUGE HEAT FLUX' /
+&BNDF QUANTITY='WALL TEMPERATURE' /
+&BNDF QUANTITY='BURNING RATE' /
+
+! vehicle centreline (x=0)
+&SLCF PBX=0.0000, QUANTITY='TEMPERATURE' /
+&SLCF PBX=0.0000, QUANTITY='HRRPUV' /
+&SLCF PBX=0.0000, QUANTITY='VOLUME FRACTION', SPEC_ID='OXYGEN' /
+&SLCF PBX=0.0000, QUANTITY='MASS FRACTION', SPEC_ID='BATTERY_GAS' /
+! vehicle centre (y=0)
+&SLCF PBY=0.0000, QUANTITY='TEMPERATURE' /
+&SLCF PBY=0.0000, QUANTITY='HRRPUV' /
+! pack mid-height (under-body vent jets)
+&SLCF PBZ=0.2500, QUANTITY='TEMPERATURE' /
+&SLCF PBZ=0.2500, QUANTITY='HRRPUV' /
+! ceiling TC level z=2.27 m
+&SLCF PBZ=2.2500, QUANTITY='TEMPERATURE' /
+&ISOF QUANTITY='HRRPUV', VALUE(1)=100. /
+
+&TAIL /

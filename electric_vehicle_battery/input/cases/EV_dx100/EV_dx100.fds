@@ -1,0 +1,245 @@
+&HEAD CHID='EV_dx100', TITLE='Grid sensitivity dx=0.100 m' /
+! 생성: input/build_fds_input.ipynb  (수동 편집 금지 — 노트북을 고칠 것)
+! 1D 소스: input/data_1d/  (Δt=0.50 s)
+
+! ========================================================================
+!  메쉬 · 시간 · 출력
+! ========================================================================
+&MESH ID='M01', IJK=47,60,25, XB=0.0000,4.7000, 0.0000,6.0000, 0.0000,2.5000 /
+&MESH ID='M02', IJK=47,60,25, XB=0.0000,4.7000, 0.0000,6.0000, 2.5000,5.0000 /
+&MESH ID='M03', IJK=53,60,25, XB=4.7000,10.0000, 0.0000,6.0000, 0.0000,2.5000 /
+&MESH ID='M04', IJK=53,60,25, XB=4.7000,10.0000, 0.0000,6.0000, 2.5000,5.0000 /
+! 메쉬 경계면: x=[4.7], y=[], z=[2.5]
+&TIME T_END=900.0 /
+&MISC TMPA=20.0 /
+&DUMP DT_HRR=1.0, DT_DEVC=1.0, DT_SLCF=2.0, DT_BNDF=10.0, MASS_FILE=T /
+
+! ========================================================================
+!  화학종  (브리프 4장: 층 1 성분 -> 층 2 lumped)
+! ========================================================================
+&SPEC ID='HYDROGEN'          LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='CARBON MONOXIDE'   LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='CARBON DIOXIDE'    LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='METHANE'           LUMPED_COMPONENT_ONLY=T /
+&SPEC ID='ETHYLENE'          LUMPED_COMPONENT_ONLY=T /
+
+! 배터리 벤트가스 lumped fuel. CO2를 안에 포함 (브리프 4.3)
+!   -> 원자 balance상 CO2의 산소요구량은 0이므로 그대로 넣어도 무방하고,
+!      빼면 질량유량이 틀리고 희석·질식 효과가 사라진다.
+&SPEC ID='BATTERY_GAS',
+      SPEC_ID(1)='HYDROGEN', VOLUME_FRACTION(1)=28.000,
+      SPEC_ID(2)='CARBON MONOXIDE', VOLUME_FRACTION(2)=23.000,
+      SPEC_ID(3)='CARBON DIOXIDE', VOLUME_FRACTION(3)=28.000,
+      SPEC_ID(4)='METHANE', VOLUME_FRACTION(4)=12.000,
+      SPEC_ID(5)='ETHYLENE', VOLUME_FRACTION(5)=9.000 /
+
+&SPEC ID='CAR_BODY_FUEL', FORMULA='C6H10O1' /
+! HF: lumped fuel에 넣을 수 없다 (C,H,N,O 원자만 허용, 브리프 4.5 ④).
+!     비반응 추적 species로 벤트에서 동시 주입한다.
+&SPEC ID='HYDROGEN FLUORIDE' /
+
+! ========================================================================
+!  반응  (층 3: 연료 2종 -> REAC 2줄)
+! ========================================================================
+&REAC ID='BATT', FUEL='BATTERY_GAS',
+      HEAT_OF_COMBUSTION=14644.3,   ! 불활성(CO2) 포함 기준 (브리프 4.5 ①)
+      SOOT_YIELD=0.02, CO_YIELD=0.05,  ! 조성 CO와 별개 (4.5 ②)
+      RADIATIVE_FRACTION=0.15 /   ! 기본 0.35 금지, H2 우세 화염 (4.5 ③)
+
+&REAC ID='BODY', FUEL='CAR_BODY_FUEL',
+      HEAT_OF_COMBUSTION=25000.0,
+      SOOT_YIELD=0.1, CO_YIELD=0.05,
+      RADIATIVE_FRACTION=0.35 /
+
+! ========================================================================
+!  차체 재료 — 증발(액체) 모델  (브리프 3.2, 6.4)
+! ========================================================================
+! BOILING_TEMPERATURE가 있으면 FDS가 액체 열분해 모델을 쓰고 N_REACTIONS=1이
+! 자동 설정되어, 유일한 '반응'이 액체->기체 상변화가 된다.
+! 따라서 HEAT_OF_REACTION은 기화 잠열 h_v로 해석된다.
+&MATL ID='CAR_BODY_LIQUID'
+      SPEC_ID='CAR_BODY_FUEL'
+      NU_SPEC=1.0
+      BOILING_TEMPERATURE=350.0
+      HEAT_OF_REACTION=500.0
+      DENSITY=900.0
+      CONDUCTIVITY=0.2
+      SPECIFIC_HEAT=1.5
+      ABSORPTION_COEFFICIENT=1000.0
+      EMISSIVITY=0.9 /
+
+&SURF ID='CAR_BODY', MATL_ID='CAR_BODY_LIQUID', THICKNESS=0.012, COLOR='SILVER' /
+&SURF ID='TIRE',     MATL_ID='CAR_BODY_LIQUID', THICKNESS=0.02, COLOR='BLACK' /
+&SURF ID='GROUND', COLOR='GRAY 40' /   ! 비활성 지면
+
+! ========================================================================
+!  경로 ① — 팩 케이싱 고체 경계조건  (브리프 3.1, 6.5)
+! ========================================================================
+! TMP_FRONT(온도지정)이 아니라 NET_HEAT_FLUX(열유속지정)를 쓴다:
+!  - 온도를 고정하면 FDS가 계산한 화염 복사가 팩 표면에 영향을 못 준다
+!  - 양방향 커플링으로 확장할 때 열유속 방식이 그대로 이어진다
+! FDS 규약: NET_HEAT_FLUX > 0 이면 벽이 주변 기체를 가열한다.
+&SURF ID='PACK_CASE', COLOR='GRAY 30', NET_HEAT_FLUX=5.0000, RAMP_Q='cas_q' /
+
+&RAMP ID='cas_q', T=    0.00, F=0.00000 /
+&RAMP ID='cas_q', T=  300.00, F=0.30000 /
+&RAMP ID='cas_q', T=  600.00, F=0.80000 /
+&RAMP ID='cas_q', T=  900.00, F=1.00000 /
+
+! ========================================================================
+!  경로 ② — 벤트가스 기체 연료 소스  (브리프 3.1, 6.3)
+! ========================================================================
+! MASS_FLUX는 RAMP F=1.0에 해당하는 기준값. 실제 유량 = MASS_FLUX x F(t).
+! 스냅된 실제 벤트 면적으로 나눠 총 방출질량이 1D와 일치하도록 했다.
+! 벤트 제트는 해상하지 않는다: 실제 100 m/s급 제트를 넓은 등가 면적에
+! 분산시켜 운동량을 낮춘 것 (브리프 6.2).
+
+! --- Z1: 면적 0.3000 m2, 피크 0.04675 kg/s, 방출질량 9.00 kg
+&SURF ID='VENT_Z1', COLOR='ORANGE',
+      SPEC_ID(1)='BATTERY_GAS', MASS_FLUX(1)=0.155065, RAMP_MF(1)='mf_z1',
+      SPEC_ID(2)='HYDROGEN FLUORIDE', MASS_FLUX(2)=0.000779, RAMP_MF(2)='mf_z1',
+      TMP_FRONT=620.0, RAMP_T='tv_z1' /
+&RAMP ID='mf_z1', T=    0.00, F=0.00000 /
+&RAMP ID='mf_z1', T=   60.00, F=0.00000 /
+&RAMP ID='mf_z1', T=   65.00, F=1.00000 /
+&RAMP ID='mf_z1', T=  245.00, F=1.00000 /
+&RAMP ID='mf_z1', T=  265.00, F=0.00000 /
+&RAMP ID='mf_z1', T=  900.00, F=0.00000 /
+&RAMP ID='tv_z1', T=    0.00, F=0.00000 /
+&RAMP ID='tv_z1', T=   60.00, F=0.00000 /
+&RAMP ID='tv_z1', T=   60.50, F=0.59808 /
+&RAMP ID='tv_z1', T=   65.00, F=1.00000 /
+&RAMP ID='tv_z1', T=  245.00, F=1.00000 /
+&RAMP ID='tv_z1', T=  264.50, F=0.56459 /
+&RAMP ID='tv_z1', T=  265.00, F=0.00000 /
+&RAMP ID='tv_z1', T=  900.00, F=0.00000 /
+
+! --- Z2: 면적 0.2400 m2, 피크 0.04675 kg/s, 방출질량 9.00 kg
+&SURF ID='VENT_Z2', COLOR='ORANGE',
+      SPEC_ID(1)='BATTERY_GAS', MASS_FLUX(1)=0.193831, RAMP_MF(1)='mf_z2',
+      SPEC_ID(2)='HYDROGEN FLUORIDE', MASS_FLUX(2)=0.000974, RAMP_MF(2)='mf_z2',
+      TMP_FRONT=640.0, RAMP_T='tv_z2' /
+&RAMP ID='mf_z2', T=    0.00, F=0.00000 /
+&RAMP ID='mf_z2', T=  240.00, F=0.00000 /
+&RAMP ID='mf_z2', T=  245.00, F=1.00000 /
+&RAMP ID='mf_z2', T=  425.00, F=1.00000 /
+&RAMP ID='mf_z2', T=  445.00, F=0.00000 /
+&RAMP ID='mf_z2', T=  900.00, F=0.00000 /
+&RAMP ID='tv_z2', T=    0.00, F=0.00000 /
+&RAMP ID='tv_z2', T=  240.00, F=0.00000 /
+&RAMP ID='tv_z2', T=  240.50, F=0.60234 /
+&RAMP ID='tv_z2', T=  245.00, F=1.00000 /
+&RAMP ID='tv_z2', T=  425.00, F=1.00000 /
+&RAMP ID='tv_z2', T=  444.50, F=0.56920 /
+&RAMP ID='tv_z2', T=  445.00, F=0.00000 /
+&RAMP ID='tv_z2', T=  900.00, F=0.00000 /
+
+! --- Z3: 면적 0.3000 m2, 피크 0.04675 kg/s, 방출질량 9.00 kg
+&SURF ID='VENT_Z3', COLOR='ORANGE',
+      SPEC_ID(1)='BATTERY_GAS', MASS_FLUX(1)=0.155065, RAMP_MF(1)='mf_z3',
+      SPEC_ID(2)='HYDROGEN FLUORIDE', MASS_FLUX(2)=0.000779, RAMP_MF(2)='mf_z3',
+      TMP_FRONT=660.0, RAMP_T='tv_z3' /
+&RAMP ID='mf_z3', T=    0.00, F=0.00000 /
+&RAMP ID='mf_z3', T=  420.00, F=0.00000 /
+&RAMP ID='mf_z3', T=  425.00, F=1.00000 /
+&RAMP ID='mf_z3', T=  605.00, F=1.00000 /
+&RAMP ID='mf_z3', T=  625.00, F=0.00000 /
+&RAMP ID='mf_z3', T=  900.00, F=0.00000 /
+&RAMP ID='tv_z3', T=    0.00, F=0.00000 /
+&RAMP ID='tv_z3', T=  420.00, F=0.00000 /
+&RAMP ID='tv_z3', T=  420.50, F=0.60633 /
+&RAMP ID='tv_z3', T=  425.00, F=1.00000 /
+&RAMP ID='tv_z3', T=  605.00, F=1.00000 /
+&RAMP ID='tv_z3', T=  624.50, F=0.57352 /
+&RAMP ID='tv_z3', T=  625.00, F=0.00000 /
+&RAMP ID='tv_z3', T=  900.00, F=0.00000 /
+
+! ========================================================================
+!  지오메트리 — 차량 형상 + 배터리 팩
+! ========================================================================
+&OBST ID='FLOORPAN', XB=2.8000,7.2000,2.1000,3.9000,0.4000,0.6000, SURF_ID='CAR_BODY', COLOR='GRAY 60' /
+&OBST ID='HOOD', XB=2.8000,4.1000,2.1000,3.9000,0.6000,1.0000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='DOORS', XB=4.1000,6.6000,2.1000,3.9000,0.6000,1.2000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='TRUNK', XB=6.6000,7.2000,2.1000,3.9000,0.6000,1.1000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='WINDSHIELD', XB=4.3000,4.6000,2.2000,3.8000,1.2000,1.5000, SURF_ID='CAR_BODY', COLOR='SKY BLUE' /
+&OBST ID='ROOF', XB=4.6000,6.0000,2.2000,3.8000,1.2000,1.8000, SURF_ID='CAR_BODY', COLOR='SILVER' /
+&OBST ID='BACKLIGHT', XB=6.0000,6.3000,2.2000,3.8000,1.2000,1.5000, SURF_ID='CAR_BODY', COLOR='SKY BLUE' /
+&OBST ID='TIRE_FL', XB=3.3000,3.9000,2.0000,2.3000,0.0000,0.6000, SURF_ID='TIRE', COLOR='BLACK' /
+&OBST ID='TIRE_FR', XB=3.3000,3.9000,3.7000,3.9000,0.0000,0.6000, SURF_ID='TIRE', COLOR='BLACK' /
+&OBST ID='TIRE_RL', XB=6.1000,6.7000,2.0000,2.3000,0.0000,0.6000, SURF_ID='TIRE', COLOR='BLACK' /
+&OBST ID='TIRE_RR', XB=6.1000,6.7000,3.7000,3.9000,0.0000,0.6000, SURF_ID='TIRE', COLOR='BLACK' /
+
+&OBST ID='PACK', XB=4.0000,6.0000,2.3000,3.7000,0.1000,0.4000, SURF_ID='PACK_CASE', COLOR='GRAY 30' /   ! 연소하지 않음
+
+! 벤트 패치 — 팩 ±y 측면 (상면은 플로어팬에 막혀 유량이 사라진다)
+&VENT XB=4.1000,4.6000,2.3000,2.3000,0.1000,0.4000, SURF_ID='VENT_Z1' /
+&VENT XB=4.1000,4.6000,3.7000,3.7000,0.1000,0.4000, SURF_ID='VENT_Z1' /
+&VENT XB=4.8000,5.2000,2.3000,2.3000,0.1000,0.4000, SURF_ID='VENT_Z2' /
+&VENT XB=4.8000,5.2000,3.7000,3.7000,0.1000,0.4000, SURF_ID='VENT_Z2' /
+&VENT XB=5.4000,5.9000,2.3000,2.3000,0.1000,0.4000, SURF_ID='VENT_Z3' /
+&VENT XB=5.4000,5.9000,3.7000,3.7000,0.1000,0.4000, SURF_ID='VENT_Z3' /
+
+! 바닥 제외 전면 OPEN (브리프 6.1)
+&VENT MB='XMIN', SURF_ID='OPEN' /
+&VENT MB='XMAX', SURF_ID='OPEN' /
+&VENT MB='YMIN', SURF_ID='OPEN' /
+&VENT MB='YMAX', SURF_ID='OPEN' /
+&VENT MB='ZMAX', SURF_ID='OPEN' /
+&VENT MB='ZMIN', SURF_ID='GROUND' /
+
+! ========================================================================
+!  출력
+! ========================================================================
+! --- 반응별 HRR 분리: 배터리 기여 vs 차체 기여 (브리프 8장 #1)
+&DEVC ID='HRR_BATT', QUANTITY='HRRPUV REAC', REAC_ID='BATT', SPATIAL_STATISTIC='VOLUME INTEGRAL', XB=0.0000,10.0000,0.0000,6.0000,0.0000,5.0000 /
+&DEVC ID='HRR_BODY', QUANTITY='HRRPUV REAC', REAC_ID='BODY', SPATIAL_STATISTIC='VOLUME INTEGRAL', XB=0.0000,10.0000,0.0000,6.0000,0.0000,5.0000 /
+
+! --- 팩 표면 입사 열유속: 1D 되먹임용 (브리프 5.2 3단계)
+!     q_* [kW/m2] = 면 평균 (균일격자이므로 면적평균과 동일).
+!                   1D가 가정한 경계조건과 직접 비교할 값.
+!     Q_* [kW]     = 면적적분 (에너지 수지 확인용)
+&DEVC ID='q_PACK_BOT', QUANTITY='GAUGE HEAT FLUX', XB=4.0000,6.0000,2.3000,3.7000,0.1000,0.1000, IOR=-3, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='Q_PACK_BOT', QUANTITY='GAUGE HEAT FLUX', XB=4.0000,6.0000,2.3000,3.7000,0.1000,0.1000, IOR=-3, SPATIAL_STATISTIC='SURFACE INTEGRAL' /
+&DEVC ID='T_PACK_BOT', QUANTITY='WALL TEMPERATURE', XB=4.0000,6.0000,2.3000,3.7000,0.1000,0.1000, IOR=-3, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='q_PACK_YMIN', QUANTITY='GAUGE HEAT FLUX', XB=4.0000,6.0000,2.3000,2.3000,0.1000,0.4000, IOR=-2, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='Q_PACK_YMIN', QUANTITY='GAUGE HEAT FLUX', XB=4.0000,6.0000,2.3000,2.3000,0.1000,0.4000, IOR=-2, SPATIAL_STATISTIC='SURFACE INTEGRAL' /
+&DEVC ID='T_PACK_YMIN', QUANTITY='WALL TEMPERATURE', XB=4.0000,6.0000,2.3000,2.3000,0.1000,0.4000, IOR=-2, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='q_PACK_YMAX', QUANTITY='GAUGE HEAT FLUX', XB=4.0000,6.0000,3.7000,3.7000,0.1000,0.4000, IOR=2, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='Q_PACK_YMAX', QUANTITY='GAUGE HEAT FLUX', XB=4.0000,6.0000,3.7000,3.7000,0.1000,0.4000, IOR=2, SPATIAL_STATISTIC='SURFACE INTEGRAL' /
+&DEVC ID='T_PACK_YMAX', QUANTITY='WALL TEMPERATURE', XB=4.0000,6.0000,3.7000,3.7000,0.1000,0.4000, IOR=2, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='q_PACK_XMIN', QUANTITY='GAUGE HEAT FLUX', XB=4.0000,4.0000,2.3000,3.7000,0.1000,0.4000, IOR=-1, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='Q_PACK_XMIN', QUANTITY='GAUGE HEAT FLUX', XB=4.0000,4.0000,2.3000,3.7000,0.1000,0.4000, IOR=-1, SPATIAL_STATISTIC='SURFACE INTEGRAL' /
+&DEVC ID='T_PACK_XMIN', QUANTITY='WALL TEMPERATURE', XB=4.0000,4.0000,2.3000,3.7000,0.1000,0.4000, IOR=-1, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='q_PACK_XMAX', QUANTITY='GAUGE HEAT FLUX', XB=6.0000,6.0000,2.3000,3.7000,0.1000,0.4000, IOR=1, SPATIAL_STATISTIC='MEAN' /
+&DEVC ID='Q_PACK_XMAX', QUANTITY='GAUGE HEAT FLUX', XB=6.0000,6.0000,2.3000,3.7000,0.1000,0.4000, IOR=1, SPATIAL_STATISTIC='SURFACE INTEGRAL' /
+&DEVC ID='T_PACK_XMAX', QUANTITY='WALL TEMPERATURE', XB=6.0000,6.0000,2.3000,3.7000,0.1000,0.4000, IOR=1, SPATIAL_STATISTIC='MEAN' /
+
+! --- 기상 계측점 (차량 상방 플룸 중심선)
+&DEVC ID='T_plume_2m', QUANTITY='TEMPERATURE', XYZ=5.000,3.000,2.00 /
+&DEVC ID='T_plume_3m', QUANTITY='TEMPERATURE', XYZ=5.000,3.000,3.00 /
+&DEVC ID='T_plume_4m', QUANTITY='TEMPERATURE', XYZ=5.000,3.000,4.00 /
+&DEVC ID='O2_underbody', QUANTITY='VOLUME FRACTION', SPEC_ID='OXYGEN', XYZ=5.000,3.000,0.275 /
+&DEVC ID='CO_1p5m', QUANTITY='VOLUME FRACTION', SPEC_ID='CARBON MONOXIDE', XYZ=5.000,5.000,1.50 /
+&DEVC ID='O2_1p5m', QUANTITY='VOLUME FRACTION', SPEC_ID='OXYGEN', XYZ=5.000,5.000,1.50 /
+&DEVC ID='HF_1p5m', QUANTITY='VOLUME FRACTION', SPEC_ID='HYDROGEN FLUORIDE', XYZ=5.000,5.000,1.50 /
+&DEVC ID='BATTGAS_underbody', QUANTITY='MASS FRACTION', SPEC_ID='BATTERY_GAS', XYZ=5.000,3.000,0.275 /   ! 미연소 축적 (8장 #7)
+
+! --- 경계면 출력 (팩 열유속 분포 · 차체 연소율)
+&BNDF QUANTITY='GAUGE HEAT FLUX' /
+&BNDF QUANTITY='NET HEAT FLUX' /
+&BNDF QUANTITY='WALL TEMPERATURE' /
+&BNDF QUANTITY='BURNING RATE' /
+
+! --- 슬라이스
+&SLCF PBY=3.0000, QUANTITY='TEMPERATURE' /
+&SLCF PBY=3.0000, QUANTITY='HRRPUV' /
+&SLCF PBY=3.0000, QUANTITY='VOLUME FRACTION', SPEC_ID='OXYGEN' /
+&SLCF PBY=3.0000, QUANTITY='VOLUME FRACTION', SPEC_ID='CARBON MONOXIDE' /
+&SLCF PBY=3.0000, QUANTITY='MASS FRACTION', SPEC_ID='BATTERY_GAS' /
+&SLCF PBY=3.0000, QUANTITY='VOLUME FRACTION', SPEC_ID='HYDROGEN FLUORIDE' /
+&SLCF PBX=5.0000, QUANTITY='TEMPERATURE' /
+&SLCF PBX=5.0000, QUANTITY='HRRPUV' /
+&SLCF PBZ=0.275, QUANTITY='TEMPERATURE' /   ! 차량 하부
+&ISOF QUANTITY='HRRPUV', VALUE(1)=100. /
+
+&TAIL /
